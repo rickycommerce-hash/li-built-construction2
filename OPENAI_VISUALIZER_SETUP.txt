@@ -1,0 +1,35 @@
+LI BUILT — BACKGROUND OPENAI VISUALIZER SETUP
+==============================================
+
+This build uses a Netlify Background Function plus Netlify Blobs. This prevents a long OpenAI image edit from being cut off by a normal short web request.
+
+REQUIRED SETUP
+--------------
+1. Deploy this ZIP as a NEW Netlify site or new production deployment.
+2. Open Netlify > Site configuration > Environment variables.
+3. Add:
+   OPENAI_API_KEY = your active OpenAI project API key
+4. Redeploy after saving the variable.
+
+RECOMMENDED OPTIONAL VARIABLES
+------------------------------
+OPENAI_IMAGE_MODEL = gpt-image-1.5
+OPENAI_IMAGE_QUALITY = medium
+OPENAI_IMAGE_SIZE = 1536x1024
+
+IMPORTANT
+---------
+- The OpenAI API account must have billing/credits enabled.
+- GPT Image access can require OpenAI organization verification.
+- ChatGPT Plus does not automatically provide OpenAI API credits.
+- The API key must never be placed in index.html or browser JavaScript.
+
+HOW THIS VERSION WORKS
+----------------------
+1. The browser starts a Netlify Background Function.
+2. The background function saves progress and results in Netlify Blobs.
+3. The page checks job status every few seconds.
+4. OpenAI can continue working even when generation takes longer than a normal function request.
+5. The final generated image is returned to the before-and-after comparison tool.
+
+The visualizer also includes clickable prompt examples for kitchens, bathrooms, basements, living rooms, backyards, and pool projects.

@@ -1,0 +1,42 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/visualizer-health"
+  to = "/.netlify/functions/visualizer-health"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/visualize-start"
+  to = "/.netlify/functions/visualize-space-background"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/visualize-status"
+  to = "/.netlify/functions/visualize-status"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/thank-you"
+  to = "/thank-you.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

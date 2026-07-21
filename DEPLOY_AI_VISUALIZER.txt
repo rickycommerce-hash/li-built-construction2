@@ -1,0 +1,31 @@
+IMPORTANT: THE AI VISUALIZER CANNOT BE DEPLOYED WITH NETLIFY DRAG-AND-DROP
+
+Netlify's manual drag-and-drop deploy publishes static files only. This project requires Netlify Functions and a Background Function, so deploy it one of these two ways:
+
+OPTION 1 — NETLIFY + GITHUB (RECOMMENDED)
+1. Unzip this package.
+2. Upload the unzipped folder to a new GitHub repository.
+3. In Netlify, choose Add new project > Import an existing project.
+4. Connect the GitHub repository.
+5. Leave the publish directory as .
+6. Deploy.
+7. In Netlify, open Project configuration > Environment variables.
+8. Add OPENAI_API_KEY with your OpenAI API key.
+9. Add optional OPENAI_IMAGE_MODEL = gpt-image-1.5
+10. Trigger a new deploy.
+
+OPTION 2 — NETLIFY CLI
+1. Install Node.js.
+2. Unzip this package and open a terminal in the folder.
+3. Run: npm install
+4. Run: npx netlify login
+5. Run: npx netlify init
+6. Run: npx netlify deploy --build --prod
+7. Add OPENAI_API_KEY in Netlify environment variables and redeploy.
+
+TEST
+Open https://YOUR-SITE.netlify.app/api/visualizer-health
+You should see JSON with:
+{"ok":true,"functions":true,"openaiConfigured":true}
+
+If the endpoint is a 404, the Functions were not deployed.
