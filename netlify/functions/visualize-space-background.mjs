@@ -85,9 +85,7 @@ export default async (request) => {
       quality: process.env.OPENAI_IMAGE_QUALITY || 'medium',
       output_format: 'jpeg',
       output_compression: 76,
-      moderation: 'auto',
-      input_fidelity: 'high'
-    };
+      moderation: 'auto'};
 
     await save({ status: 'working', stage: 'rendering', percent: 55 });
 
