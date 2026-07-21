@@ -6,24 +6,6 @@
   node_bundler = "esbuild"
 
 [[redirects]]
-  from = "/api/visualizer-health"
-  to = "/.netlify/functions/visualizer-health"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/visualize-start"
-  to = "/.netlify/functions/visualize-space-background"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/visualize-status"
-  to = "/.netlify/functions/visualize-status"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/thank-you"
   to = "/thank-you.html"
   status = 200

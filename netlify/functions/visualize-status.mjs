@@ -35,5 +35,6 @@ export default async (request) => {
 };
 
 export const config = {
-  path: '/api/visualize-status'
+  path: '/api/visualize-status',
+  method: ['GET', 'OPTIONS']
 };

@@ -175,7 +175,7 @@
       const image = new Image();
       image.onerror = () => reject(new Error('The selected image is not valid.'));
       image.onload = () => {
-        const maxDimension = 1600;
+        const maxDimension = 1400;
         const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
         const width = Math.max(1, Math.round(image.naturalWidth * scale));
         const height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -186,7 +186,12 @@
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, width, height);
         context.drawImage(image, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.84));
+        const encoded = canvas.toDataURL('image/jpeg', 0.78);
+        if (encoded.length > 4_800_000) {
+          reject(new Error('This photo is still too large after optimization. Please choose a smaller image.'));
+          return;
+        }
+        resolve(encoded);
       };
       image.src = reader.result;
     };
@@ -315,7 +320,7 @@
     const maximumWait = 14 * 60 * 1000;
     while (Date.now() - started < maximumWait) {
       await sleep(2200);
-      const response = await fetch(`/.netlify/functions/visualize-status?jobId=${encodeURIComponent(jobId)}&t=${Date.now()}`, {
+      const response = await fetch(`/api/visualize-status?jobId=${encodeURIComponent(jobId)}&t=${Date.now()}`, {
         cache: 'no-store'
       });
       const job = await response.json().catch(() => ({}));

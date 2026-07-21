@@ -1,7 +1,7 @@
 import { getStore } from '@netlify/blobs';
 
-const MAX_IMAGE_DATA_LENGTH = 8_500_000;
 const clean = (value, max = 1200) => String(value || '').trim().slice(0, max);
+const cleanJobId = (value) => String(value || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 100);
 
 function friendlyOpenAIError(status, data) {
   const raw = data?.error?.message || data?.message || 'OpenAI could not generate this concept.';
@@ -19,18 +19,19 @@ function friendlyOpenAIError(status, data) {
 }
 
 export default async (request) => {
-  let body = {};
+  let invocation = {};
   try {
-    body = await request.json();
+    invocation = await request.json();
   } catch {
     return;
   }
 
-  const jobId = clean(body.jobId, 100).replace(/[^a-zA-Z0-9_-]/g, '');
+  const jobId = cleanJobId(invocation.jobId);
   if (!jobId) return;
 
-  const store = getStore('li-built-visualizer-jobs');
-  const save = async (value) => store.setJSON(jobId, {
+  const inputs = getStore('li-built-visualizer-inputs');
+  const jobs = getStore('li-built-visualizer-jobs');
+  const save = async (value) => jobs.setJSON(jobId, {
     ...value,
     updatedAt: new Date().toISOString()
   });
@@ -38,6 +39,9 @@ export default async (request) => {
   await save({ status: 'working', stage: 'preparing', percent: 8 });
 
   try {
+    const body = await inputs.get(jobId, { type: 'json', consistency: 'strong' });
+    if (!body) throw new Error('The uploaded visualizer request could not be found. Please submit it again.');
+
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) throw new Error('The AI visualizer is not connected. Add OPENAI_API_KEY in Netlify environment variables and redeploy.');
 
@@ -52,7 +56,6 @@ export default async (request) => {
     const photorealistic = body.photorealistic !== false;
 
     if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(imageDataUrl)) throw new Error('Please upload a valid JPG, PNG, or WebP image.');
-    if (imageDataUrl.length > MAX_IMAGE_DATA_LENGTH) throw new Error('The processed image is too large. Please use a smaller photo.');
     if (!space || !style || vision.length < 12) throw new Error('Please choose the space and style and describe the renovation you want.');
 
     const prompt = [
@@ -72,7 +75,7 @@ export default async (request) => {
 
     await save({ status: 'working', stage: 'analyzing', percent: 24 });
 
-    const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1.5';
+    const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-2';
     const payload = {
       model,
       images: [{ image_url: imageDataUrl }],
@@ -81,7 +84,7 @@ export default async (request) => {
       size: process.env.OPENAI_IMAGE_SIZE || '1536x1024',
       quality: process.env.OPENAI_IMAGE_QUALITY || 'medium',
       output_format: 'jpeg',
-      output_compression: 82,
+      output_compression: 76,
       moderation: 'auto',
       input_fidelity: 'high'
     };
@@ -118,6 +121,7 @@ export default async (request) => {
 
     await save({
       status: 'complete',
+      stage: 'complete',
       percent: 100,
       imageDataUrl: `data:image/jpeg;base64,${base64}`,
       requestId
@@ -130,10 +134,13 @@ export default async (request) => {
         ? 'The image generation took too long. Please try a smaller image or lower quality.'
         : (error?.message || 'The concept generator could not complete the request.')
     });
+  } finally {
+    try { await inputs.delete(jobId); } catch {}
   }
 };
 
 export const config = {
   background: true,
-  path: '/api/visualize-start'
+  path: '/api/visualize-worker',
+  method: 'POST'
 };

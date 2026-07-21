@@ -7,4 +7,4 @@ export default async () => new Response(JSON.stringify({
   headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
 });
 
-export const config = { path: '/api/visualizer-health' };
+export const config = { path: '/api/visualizer-health', method: 'GET' };
