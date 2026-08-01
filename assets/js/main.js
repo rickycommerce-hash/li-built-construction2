@@ -9,7 +9,12 @@
   const handleScroll = () => {
     const y = window.scrollY;
     header?.classList.toggle('scrolled', y > 80);
-    floatingCta?.classList.toggle('show', y > 700);
+    const conversionZoneVisible = [...document.querySelectorAll('.hero, #visualizer, #consultation, #contact')]
+      .some(section => {
+        const rect = section.getBoundingClientRect();
+        return rect.top < window.innerHeight && rect.bottom > 0;
+      });
+    floatingCta?.classList.toggle('show', window.innerWidth > 900 && y > 700 && !conversionZoneVisible);
   };
   handleScroll();
   window.addEventListener('scroll', handleScroll, { passive: true });
@@ -29,6 +34,12 @@
     document.body.classList.remove('menu-open');
   }));
 
+  const hashTarget = window.location.hash && document.querySelector(window.location.hash);
+  if (hashTarget) {
+    hashTarget.classList.add('visible');
+    hashTarget.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -36,7 +47,7 @@
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+  }, { threshold: 0.06, rootMargin: '0px 0px -10px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
   const servicePreview = document.getElementById('service-preview');
