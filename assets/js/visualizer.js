@@ -157,17 +157,16 @@
 
     if (research.marketLow > 0 && research.marketHigh >= research.marketLow) {
       setQuoteText('comparison-arg-price', formatCurrency(research.estimateTotal));
-      setQuoteText('comparison-market-price', `${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`);
       setQuoteText('comparison-arg-timeline', `Approximately ${research.argTimelineWeeks} week${research.argTimelineWeeks === 1 ? '' : 's'}`);
       setQuoteText('comparison-market-timeline', `${research.marketTimelineLowWeeks}–${research.marketTimelineHighWeeks} weeks`);
-      const midpoint = (research.marketLow + research.marketHigh) / 2;
-      const difference = Math.max(0, midpoint - research.estimateTotal);
-      const summary = research.estimateTotal < research.marketLow
-        ? `ARG's researched preliminary estimate is ${formatCurrency(research.marketLow - research.estimateTotal)} below the low end of the typical local market range while retaining an itemized scope.`
-        : research.estimateTotal <= research.marketHigh
-          ? `ARG's researched preliminary estimate falls within the typical local market range. The itemized scope and labor-hour plan make proposals easier to compare on equal terms.`
-          : `ARG's estimate reflects the itemized scope shown above. Compare final proposals line by line because lower market figures may omit selections, allowances, supervision or project protection.`;
-      setQuoteText('comparison-summary', difference > 0 ? `${summary} Compared with the market midpoint, the potential difference is ${formatCurrency(difference)}.` : summary);
+      const scopeAligned = research.estimateTotal >= research.marketLow * 0.8
+        && research.estimateTotal <= research.marketHigh * 1.25;
+      setQuoteText('comparison-market-price', scopeAligned
+        ? `${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`
+        : `General reference: ${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`);
+      setQuoteText('comparison-summary', scopeAligned
+        ? `The local reference is based on the same stated scope, project size, finish level and allowances. Compare final proposals line by line because contractor inclusions can still vary.`
+        : `Available market figures were not close enough to the itemized scope to support a direct price comparison. ARG's preliminary estimate is based on the labor, materials and allowances shown above; confirm all assumptions during the site visit.`);
       const comparison = document.getElementById('quote-comparison');
       if (comparison) comparison.hidden = false;
     }
