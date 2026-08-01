@@ -39,10 +39,13 @@
   const featureGrid = document.getElementById('room-feature-grid');
   const clearFeatures = document.getElementById('clear-room-features');
   const quoteCustomerName = document.getElementById('quote-customer-name');
+  const quoteEmail = document.getElementById('quote-email');
+  const quotePhone = document.getElementById('quote-phone');
   const quoteZip = document.getElementById('quote-zip');
   const quoteSize = document.getElementById('quote-size');
   const quoteFinish = document.getElementById('quote-finish');
   const quoteArea = document.getElementById('quote-area');
+  const instantQuote = document.getElementById('instant-quote');
   const printQuote = document.getElementById('print-quote');
 
   let processedImage = '';
@@ -193,7 +196,16 @@
     throw new Error('Current cost research is taking longer than expected.');
   };
 
-  const buildInstantQuote = async () => {
+  const captureTransformationLead = payload => {
+    fetch('/api/transformation-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true
+    }).catch(() => {});
+  };
+
+  const buildInstantQuote = async jobId => {
     const features = selectedFeatures();
     const issued = new Date();
     const validThrough = new Date(issued);
@@ -222,6 +234,28 @@
     setQuoteText('quote-total', formatCurrency(total));
     setQuoteText('quote-description', visionInput.value.trim());
 
+    captureTransformationLead({
+      submittedAt: issued.toISOString(),
+      status: 'New',
+      name: quoteCustomerName?.value.trim(),
+      email: quoteEmail?.value.trim(),
+      phone: quotePhone?.value.trim(),
+      zip: quoteZip?.value.trim(),
+      space: spaceInput.value,
+      style: styleInput.value,
+      size: quoteSize?.value,
+      finish: quoteFinish?.value,
+      areaSqFt: quoteArea?.value,
+      features,
+      vision: visionInput.value.trim(),
+      preserveLayout: preserveLayout.checked,
+      photorealistic: photorealistic.checked,
+      quoteTotal: total,
+      quoteValidUntil: validThrough.toISOString(),
+      source: 'Website Transformation Tool',
+      jobId
+    });
+
     const featureList = document.getElementById('quote-features');
     if (featureList) {
       featureList.innerHTML = features.length
@@ -229,8 +263,6 @@
         : '<li>Scope to be confirmed during the complimentary site verification.</li>';
     }
 
-    const researchStatus = document.getElementById('quote-research-status');
-    if (researchStatus) researchStatus.hidden = false;
     try {
       const quoteJobId = `${Date.now()}-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
       const response = await fetch('/api/quote-estimate', {
@@ -253,8 +285,6 @@
       applyResearchedQuote(research);
     } catch (error) {
       console.warn('Using standard quote because live cost research was unavailable.', error);
-    } finally {
-      if (researchStatus) researchStatus.hidden = true;
     }
   };
 
@@ -276,7 +306,7 @@
   const checkBackend = async () => {
     try {
       const response = await fetch('/api/visualizer-health', { cache: 'no-store' });
-      if (!response.ok) throw new Error('backend unavailable');
+      if (!response.ok) throw new Error('service unavailable');
       const data = await response.json();
       if (!data.openaiConfigured) {
         showError('The design studio is temporarily unavailable. Please call or text 631-579-3122 for assistance.');
@@ -544,6 +574,7 @@
       return;
     }
 
+    if (instantQuote) instantQuote.hidden = true;
     setLoading(true);
     try {
       const jobId = `${Date.now()}-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
@@ -577,7 +608,8 @@
       loaderStages.forEach(stage => { stage.classList.remove('is-active'); stage.classList.add('is-complete'); });
       setLoading(false);
       generated.hidden = false;
-      buildInstantQuote();
+      buildInstantQuote(jobId);
+      if (instantQuote) instantQuote.hidden = false;
       setComparison(50);
       generated.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (error) {
@@ -589,6 +621,7 @@
 
   resetButton.addEventListener('click', () => {
     generated.hidden = true;
+    if (instantQuote) instantQuote.hidden = true;
     placeholder.hidden = false;
     generatedImage.removeAttribute('src');
     setComparison(50);
