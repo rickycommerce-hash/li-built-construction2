@@ -72,12 +72,13 @@
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="shell hero-content">
         <div class="hero-copy reveal">
+          <a class="hero-tool-badge" href="#visualizer"><span>NEW</span><strong>AI Project Visualizer</strong><small>Take a photo · Preview the renovation · Get an instant quote</small></a>
           <p class="eyebrow light"><span></span> Licensed & insured Long Island remodeling.</p>
           <h1>Built stronger.<br><em>Finished better.</em></h1>
           <p class="hero-lead">From roofing, siding and windows to kitchens, bathrooms, decks and complete renovations, ARG improves Long Island homes with accountable craftsmanship from start to finish.</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#consultation">Get Your Free Project Estimate <span>↗</span></a>
-            <a class="text-link light" href="#work">Explore Selected Work <span>↓</span></a>
+            <a class="text-link light hero-visualizer-link" href="#visualizer">Take a Photo &amp; Get an Instant Quote <span>↓</span></a>
           </div>
         </div>
         <aside class="hero-card reveal delay-2" aria-label="Project promise">
@@ -316,14 +317,19 @@
               <p>Upload one clear photo. The concept generator will redesign the space while keeping the general structure and camera angle recognizable.</p>
             </div>
 
-            <label class="upload-zone" id="upload-zone" for="space-photo">
+            <div class="upload-zone" id="upload-zone">
               <input id="space-photo" name="space-photo" type="file" accept="image/jpeg,image/png,image/webp" required>
-              <span class="upload-icon">＋</span>
-              <strong>Upload a photo of your space</strong>
-              <small>JPG, PNG, or WebP · best results under 10 MB</small>
+              <input id="camera-photo" type="file" accept="image/*" capture="environment">
+              <span class="upload-icon">⌂</span>
+              <strong>Show us the space you want to transform</strong>
+              <small>Take a new photo instantly or choose one already on your phone.</small>
+              <div class="photo-source-actions">
+                <button class="photo-source-button camera-button" id="take-photo" type="button"><span>●</span> Take a Photo Now</button>
+                <button class="photo-source-button" id="choose-photo" type="button">Choose From Library</button>
+              </div>
               <img id="upload-preview" alt="Preview of uploaded space" hidden>
               <button class="replace-photo" id="replace-photo" type="button" hidden>Choose a different photo</button>
-            </label>
+            </div>
 
             <div class="visualizer-fields">
               <label>
@@ -711,6 +717,6 @@
 
   <a class="floating-cta" href="#consultation"><span>Start Your Project</span><b>↗</b></a>
   <script src="assets/js/main.js?v=ai-visualizer-1" defer></script>
-  <script src="assets/js/visualizer.js?v=5" defer></script>
+  <script src="assets/js/visualizer.js?v=6" defer></script>
 </body>
 </html>
