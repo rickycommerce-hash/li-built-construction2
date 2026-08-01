@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs';
+import { createHash } from 'node:crypto';
 
 const clean = (value, max = 1200) => String(value || '').trim().slice(0, max);
 const cleanJobId = value => String(value || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 100);
@@ -87,6 +88,21 @@ export default async request => {
       return;
     }
 
+    const cache = getStore('arg-quote-cost-cache');
+    const cacheKey = createHash('sha256').update(JSON.stringify({
+      space: project.space,
+      zipPrefix: project.zip.slice(0, 3),
+      size: project.size,
+      finish: project.finish,
+      areaBucket: Math.round(project.areaSqFt / 50) * 50,
+      features: [...project.features].sort()
+    })).digest('hex').slice(0, 32);
+    const cached = await cache.get(cacheKey, { type: 'json', consistency: 'strong' });
+    if (cached && Date.now() - Date.parse(cached.researchedAt || 0) < 24 * 60 * 60 * 1000) {
+      await save({ ...cached, status: 'complete', stage: 'complete', percent: 100, cached: true });
+      return;
+    }
+
     const prompt = `You are a residential construction cost researcher supporting a licensed Long Island remodeling contractor.
 
 Research current material prices, construction labor rates, and normal project-duration benchmarks for the project below. Use web search. Prefer sources published or updated within the last 18 months, including supplier/retailer pricing, government labor or producer-price data, and reputable residential cost guides. Focus on Long Island / Nassau / Suffolk / New York regional data when available. Do not invent sources or URLs.
@@ -121,19 +137,20 @@ Return JSON only, with exactly this shape:
 }`;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 50_000);
+    const timeout = setTimeout(() => controller.abort(), 40_000);
     const response = await fetch('https://api.openai.com/v1/responses', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: process.env.OPENAI_QUOTE_MODEL || 'gpt-5.6-terra',
-        reasoning: { effort: 'low' },
+        model: process.env.OPENAI_QUOTE_MODEL || 'gpt-5.6-luna',
+        reasoning: { effort: 'none' },
         tools: [{
           type: 'web_search',
-          search_context_size: 'medium',
+          search_context_size: 'low',
           user_location: { type: 'approximate', city: 'North Babylon', region: 'New York', country: 'US', timezone: 'America/New_York' }
         }],
         input: prompt,
+        max_output_tokens: 3500,
         safety_identifier: 'arg-public-quote-estimator'
       }),
       signal: controller.signal
@@ -173,10 +190,7 @@ Return JSON only, with exactly this shape:
       .filter((source, index, all) => all.findIndex(item => item.url === source.url) === index)
       .slice(0, 8);
 
-    await save({
-      status: 'complete',
-      stage: 'complete',
-      percent: 100,
+    const result = {
       researchedAt: new Date().toISOString(),
       materials,
       labor,
@@ -196,7 +210,9 @@ Return JSON only, with exactly this shape:
       methodology: clean(research.methodology, 600),
       sources,
       requestId
-    });
+    };
+    await cache.setJSON(cacheKey, result);
+    await save({ ...result, status: 'complete', stage: 'complete', percent: 100, cached: false });
   } catch (error) {
     console.error('Quote estimate function error', error);
     await save({
