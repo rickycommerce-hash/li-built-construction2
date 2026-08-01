@@ -39,6 +39,7 @@
   const quoteZip = document.getElementById('quote-zip');
   const quoteSize = document.getElementById('quote-size');
   const quoteFinish = document.getElementById('quote-finish');
+  const quoteArea = document.getElementById('quote-area');
   const printQuote = document.getElementById('print-quote');
 
   let processedImage = '';
@@ -112,7 +113,71 @@
     return match ? match[1] : 1750;
   };
 
-  const buildInstantQuote = () => {
+  const renderDetailLines = (elementId, lines, labelKey, detailText) => {
+    const container = document.getElementById(elementId);
+    if (!container) return;
+    container.replaceChildren(...lines.map(line => {
+      const row = document.createElement('div');
+      row.className = 'quote-detail-line';
+      const label = document.createElement('span');
+      label.textContent = line[labelKey];
+      const value = document.createElement('b');
+      value.textContent = detailText(line);
+      row.append(label, value);
+      return row;
+    }));
+  };
+
+  const applyResearchedQuote = research => {
+    const directAllowances = research.materialsTotal + research.equipmentAllowance + research.permitAllowance;
+    setQuoteText('quote-base-label', 'Materials, equipment & permit allowances');
+    setQuoteText('quote-base-amount', formatCurrency(directAllowances));
+    setQuoteText('quote-feature-label', `Trade labor · ${research.laborHours} estimated hours`);
+    setQuoteText('quote-feature-amount', formatCurrency(research.laborTotal));
+    setQuoteText('quote-coordination-amount', formatCurrency(research.coordination + research.contingency));
+    setQuoteText('quote-total', formatCurrency(research.estimateTotal));
+
+    renderDetailLines('quote-material-lines', research.materials || [], 'description', line => `${line.quantity} ${line.unit} · ${formatCurrency(line.total)}`);
+    renderDetailLines('quote-labor-lines', research.labor || [], 'trade', line => `${line.hours} hrs @ ${formatCurrency(line.hourlyRate)} · ${formatCurrency(line.total)}`);
+    const breakdown = document.getElementById('quote-breakdown');
+    if (breakdown) breakdown.hidden = false;
+
+    if (research.marketLow > 0 && research.marketHigh >= research.marketLow) {
+      setQuoteText('comparison-arg-price', formatCurrency(research.estimateTotal));
+      setQuoteText('comparison-market-price', `${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`);
+      setQuoteText('comparison-arg-timeline', `Approximately ${research.argTimelineWeeks} week${research.argTimelineWeeks === 1 ? '' : 's'}`);
+      setQuoteText('comparison-market-timeline', `${research.marketTimelineLowWeeks}–${research.marketTimelineHighWeeks} weeks`);
+      const midpoint = (research.marketLow + research.marketHigh) / 2;
+      const difference = Math.max(0, midpoint - research.estimateTotal);
+      const summary = research.estimateTotal < research.marketLow
+        ? `ARG's researched preliminary estimate is ${formatCurrency(research.marketLow - research.estimateTotal)} below the low end of the typical local market range while retaining an itemized scope.`
+        : research.estimateTotal <= research.marketHigh
+          ? `ARG's researched preliminary estimate falls within the typical local market range. The itemized scope and labor-hour plan make proposals easier to compare on equal terms.`
+          : `ARG's estimate reflects the itemized scope shown above. Compare final proposals line by line because lower market figures may omit selections, allowances, supervision or project protection.`;
+      setQuoteText('comparison-summary', difference > 0 ? `${summary} Compared with the market midpoint, the potential difference is ${formatCurrency(difference)}.` : summary);
+      const comparison = document.getElementById('quote-comparison');
+      if (comparison) comparison.hidden = false;
+    }
+
+    const sourceList = document.getElementById('quote-source-list');
+    const sourcePanel = document.getElementById('quote-sources');
+    if (sourceList && sourcePanel && Array.isArray(research.sources) && research.sources.length) {
+      sourceList.replaceChildren(...research.sources.map(source => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = source.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = source.title;
+        item.append(link);
+        if (source.note) item.append(document.createTextNode(` — ${source.note}`));
+        return item;
+      }));
+      sourcePanel.hidden = false;
+    }
+  };
+
+  const buildInstantQuote = async () => {
     const features = selectedFeatures();
     const issued = new Date();
     const validThrough = new Date(issued);
@@ -146,6 +211,32 @@
       featureList.innerHTML = features.length
         ? features.map(feature => `<li>${feature.replace(/[<>&]/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[character]))}</li>`).join('')
         : '<li>Scope to be confirmed during the complimentary site verification.</li>';
+    }
+
+    const researchStatus = document.getElementById('quote-research-status');
+    if (researchStatus) researchStatus.hidden = false;
+    try {
+      const response = await fetch('/api/quote-estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          space: spaceInput.value,
+          style: styleInput.value,
+          vision: visionInput.value.trim(),
+          features,
+          zip: quoteZip?.value.trim(),
+          size: quoteSize?.value,
+          finish: quoteFinish?.value,
+          areaSqFt: quoteArea?.value
+        })
+      });
+      const research = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(research.error || 'Current research is unavailable.');
+      applyResearchedQuote(research);
+    } catch (error) {
+      console.warn('Using standard quote because live cost research was unavailable.', error);
+    } finally {
+      if (researchStatus) researchStatus.hidden = true;
     }
   };
 

@@ -365,6 +365,7 @@
                 <label><span>Project ZIP code</span><input id="quote-zip" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="11703"></label>
                 <label><span>Approximate project size</span><select id="quote-size"><option value="small">Small / focused area</option><option value="standard" selected>Typical room or project</option><option value="large">Large or extensive project</option></select></label>
                 <label><span>Finish level</span><select id="quote-finish"><option value="essential">Quality essentials</option><option value="signature" selected>ARG signature</option><option value="premium">Premium finishes</option></select></label>
+                <label><span>Approximate square footage</span><input id="quote-area" type="number" min="25" max="10000" step="25" inputmode="numeric" placeholder="Example: 250"></label>
               </div>
             </div>
 
@@ -440,6 +441,7 @@
               </div>
 
               <section class="instant-quote" id="instant-quote" aria-labelledby="instant-quote-title">
+                <div class="quote-research-status" id="quote-research-status" hidden><span></span><strong>Researching current Long Island labor and material costs…</strong><small>This may take up to a minute.</small></div>
                 <header class="quote-header">
                   <div class="quote-brand"><img src="assets/images/arg-logo.png" alt="ARG Home Improvements & Remodeling"><div><strong>ARG HOME IMPROVEMENTS</strong><span>&amp; REMODELING, INC.</span><small>Licensed &amp; Insured · Nassau HIC #201251</small></div></div>
                   <div class="quote-heading"><span>PRELIMINARY PROJECT QUOTE</span><h3 id="instant-quote-title">Instant renovation estimate</h3><small>Call or text 631-579-3122</small></div>
@@ -463,6 +465,21 @@
                   <div class="quote-row quote-total" role="row"><span role="cell">Preliminary project estimate</span><strong role="cell" id="quote-total"></strong></div>
                 </div>
                 <div class="quote-inclusions"><strong>Concept scope</strong><p id="quote-description"></p><ul id="quote-features"></ul></div>
+                <div class="quote-breakdown" id="quote-breakdown" hidden>
+                  <div><strong>Materials &amp; allowances</strong><div id="quote-material-lines"></div></div>
+                  <div><strong>Trade labor</strong><div id="quote-labor-lines"></div></div>
+                </div>
+                <div class="quote-comparison" id="quote-comparison" hidden>
+                  <div class="quote-comparison-head"><span>LOCAL MARKET COMPARISON</span><h4>ARG value compared with a typical local contractor</h4></div>
+                  <div class="quote-comparison-grid">
+                    <div class="comparison-label"></div><strong>ARG preliminary plan</strong><strong>Typical local contractor</strong>
+                    <span>Project investment</span><b id="comparison-arg-price"></b><b id="comparison-market-price"></b>
+                    <span>Estimated timeline</span><b id="comparison-arg-timeline"></b><b id="comparison-market-timeline"></b>
+                    <span>Planning approach</span><b>Itemized labor, materials and scope</b><b>Varies by contractor and proposal</b>
+                  </div>
+                  <p id="comparison-summary"></p>
+                </div>
+                <div class="quote-sources" id="quote-sources" hidden><strong>Cost research sources</strong><ul id="quote-source-list"></ul><small>Market information is researched when the quote is generated and may change. Supplier availability, exact selections and site conditions control final pricing.</small></div>
                 <div class="quote-terms">
                   <strong>Estimate terms</strong>
                   <p>This preliminary quote is valid for 60 days from the issue date. It is an initial planning estimate based solely on the selections and image supplied online—not a contract or offer to perform work. Final scope and price require an ARG site visit, measurements, material selections, structural and code review, and a signed written agreement. Permits, engineering, concealed conditions, hazardous-material remediation, utility upgrades and sales tax are excluded unless specifically stated in the final agreement.</p>
