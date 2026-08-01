@@ -1,4 +1,4 @@
-LI BUILT — GITHUB / NETLIFY DEPLOYMENT
+ARG Home Improvements & Remodeling — GITHUB / NETLIFY DEPLOYMENT
 
 IMPORTANT:
 1. Delete every file currently in the GitHub repository before uploading this corrected package.

@@ -1,4 +1,4 @@
-LI BUILT — BACKGROUND OPENAI VISUALIZER SETUP
+ARG Home Improvements & Remodeling — BACKGROUND OPENAI VISUALIZER SETUP
 ==============================================
 
 This build uses a Netlify Background Function plus Netlify Blobs. This prevents a long OpenAI image edit from being cut off by a normal short web request.
