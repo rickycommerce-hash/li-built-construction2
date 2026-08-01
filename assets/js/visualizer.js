@@ -177,6 +177,19 @@
     }
   };
 
+  const pollForQuote = async jobId => {
+    const started = Date.now();
+    while (Date.now() - started < 4 * 60 * 1000) {
+      await new Promise(resolve => window.setTimeout(resolve, 2500));
+      const response = await fetch(`/api/quote-status?jobId=${encodeURIComponent(jobId)}&t=${Date.now()}`, { cache: 'no-store' });
+      const job = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(job.error || 'The quote status could not be checked.');
+      if (job.status === 'complete') return job;
+      if (job.status === 'error') throw new Error(job.error || 'Current research is unavailable.');
+    }
+    throw new Error('Current cost research is taking longer than expected.');
+  };
+
   const buildInstantQuote = async () => {
     const features = selectedFeatures();
     const issued = new Date();
@@ -216,10 +229,12 @@
     const researchStatus = document.getElementById('quote-research-status');
     if (researchStatus) researchStatus.hidden = false;
     try {
+      const quoteJobId = `${Date.now()}-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
       const response = await fetch('/api/quote-estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          jobId: quoteJobId,
           space: spaceInput.value,
           style: styleInput.value,
           vision: visionInput.value.trim(),
@@ -230,8 +245,8 @@
           areaSqFt: quoteArea?.value
         })
       });
-      const research = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(research.error || 'Current research is unavailable.');
+      if (!response.ok && response.status !== 202) throw new Error('Current research is unavailable.');
+      const research = await pollForQuote(quoteJobId);
       applyResearchedQuote(research);
     } catch (error) {
       console.warn('Using standard quote because live cost research was unavailable.', error);
@@ -261,12 +276,12 @@
       if (!response.ok) throw new Error('backend unavailable');
       const data = await response.json();
       if (!data.openaiConfigured) {
-        showError('The visualizer backend is deployed, but OPENAI_API_KEY has not been added in Netlify environment variables.');
+        showError('The design studio is temporarily unavailable. Please call or text 631-579-3122 for assistance.');
       }
     } catch {
       const warning = document.createElement('div');
       warning.className = 'visualizer-backend-warning';
-      warning.innerHTML = '<strong>AI backend not deployed</strong>This site was likely uploaded with Netlify drag-and-drop. The AI visualizer requires a Git-based Netlify deployment or Netlify CLI deployment so the Functions are built and published.';
+      warning.innerHTML = '<strong>Design studio temporarily unavailable</strong>Please call or text 631-579-3122 and the ARG team will help you plan your project.';
       form.prepend(warning);
     }
   };

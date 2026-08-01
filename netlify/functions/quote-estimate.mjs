@@ -1,4 +1,7 @@
+import { getStore } from '@netlify/blobs';
+
 const clean = (value, max = 1200) => String(value || '').trim().slice(0, max);
+const cleanJobId = value => String(value || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 100);
 const number = (value, fallback = 0) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
@@ -55,10 +58,17 @@ const normalizeLabor = lines => (Array.isArray(lines) ? lines : []).slice(0, 12)
 }).filter(line => line.trade && line.hours > 0 && line.total > 0);
 
 export default async request => {
-  if (request.method !== 'POST') return new Response('Method not allowed', { status: 405 });
-
+  let jobId = '';
+  const jobs = getStore('arg-quote-jobs');
+  const save = async value => {
+    if (!jobId) return;
+    await jobs.setJSON(jobId, { ...value, updatedAt: new Date().toISOString() });
+  };
   try {
     const body = await request.json();
+    jobId = cleanJobId(body.jobId);
+    if (!jobId) return;
+    await save({ status: 'working', stage: 'researching', percent: 18 });
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) throw new Error('The quote research service is not configured.');
 
@@ -73,7 +83,8 @@ export default async request => {
       areaSqFt: Math.min(10000, Math.max(25, number(body.areaSqFt, 250)))
     };
     if (!project.space || !project.style || project.vision.length < 12) {
-      return Response.json({ error: 'More project information is required.' }, { status: 400 });
+      await save({ status: 'error', error: 'More project information is required.' });
+      return;
     }
 
     const prompt = `You are a residential construction cost researcher supporting a licensed Long Island remodeling contractor.
@@ -132,9 +143,11 @@ Return JSON only, with exactly this shape:
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       console.error('Quote research error', { status: response.status, requestId, error: data?.error });
-      return Response.json({ error: 'Current cost research is temporarily unavailable.', requestId }, { status: 502 });
+      await save({ status: 'error', error: 'Current cost research is temporarily unavailable.', requestId });
+      return;
     }
 
+    await save({ status: 'working', stage: 'calculating', percent: 78 });
     const research = parseJson(outputText(data));
     const materials = normalizeMaterials(research.materials);
     const labor = normalizeLabor(research.labor);
@@ -160,7 +173,10 @@ Return JSON only, with exactly this shape:
       .filter((source, index, all) => all.findIndex(item => item.url === source.url) === index)
       .slice(0, 8);
 
-    return Response.json({
+    await save({
+      status: 'complete',
+      stage: 'complete',
+      percent: 100,
       researchedAt: new Date().toISOString(),
       materials,
       labor,
@@ -180,15 +196,16 @@ Return JSON only, with exactly this shape:
       methodology: clean(research.methodology, 600),
       sources,
       requestId
-    }, { headers: { 'Cache-Control': 'no-store' } });
+    });
   } catch (error) {
     console.error('Quote estimate function error', error);
-    return Response.json({
+    await save({
+      status: 'error',
       error: error?.name === 'AbortError'
         ? 'Current cost research took too long. The standard estimate is shown instead.'
         : 'Current cost research is temporarily unavailable. The standard estimate is shown instead.'
-    }, { status: 500 });
+    });
   }
 };
 
-export const config = { path: '/api/quote-estimate' };
+export const config = { path: '/api/quote-estimate', method: 'POST', background: true };
