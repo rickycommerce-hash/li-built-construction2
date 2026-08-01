@@ -137,7 +137,7 @@ Return JSON only, with exactly this shape:
 }`;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 40_000);
+    const timeout = setTimeout(() => controller.abort(), 90_000);
     const response = await fetch('https://api.openai.com/v1/responses', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
