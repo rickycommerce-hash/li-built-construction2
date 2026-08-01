@@ -155,22 +155,6 @@
     const breakdown = document.getElementById('quote-breakdown');
     if (breakdown) breakdown.hidden = false;
 
-    if (research.marketLow > 0 && research.marketHigh >= research.marketLow) {
-      setQuoteText('comparison-arg-price', formatCurrency(research.estimateTotal));
-      setQuoteText('comparison-arg-timeline', `Approximately ${research.argTimelineWeeks} week${research.argTimelineWeeks === 1 ? '' : 's'}`);
-      setQuoteText('comparison-market-timeline', `${research.marketTimelineLowWeeks}–${research.marketTimelineHighWeeks} weeks`);
-      const scopeAligned = research.estimateTotal >= research.marketLow * 0.8
-        && research.estimateTotal <= research.marketHigh * 1.25;
-      setQuoteText('comparison-market-price', scopeAligned
-        ? `${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`
-        : `General reference: ${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`);
-      setQuoteText('comparison-summary', scopeAligned
-        ? `The local reference is based on the same stated scope, project size, finish level and allowances. Compare final proposals line by line because contractor inclusions can still vary.`
-        : `Available market figures were not close enough to the itemized scope to support a direct price comparison. ARG's preliminary estimate is based on the labor, materials and allowances shown above; confirm all assumptions during the site visit.`);
-      const comparison = document.getElementById('quote-comparison');
-      if (comparison) comparison.hidden = false;
-    }
-
     const sourceList = document.getElementById('quote-source-list');
     const sourcePanel = document.getElementById('quote-sources');
     if (sourceList && sourcePanel && Array.isArray(research.sources) && research.sources.length) {
