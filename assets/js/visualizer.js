@@ -141,19 +141,8 @@
   };
 
   const applyResearchedQuote = research => {
-    const directAllowances = research.materialsTotal + research.equipmentAllowance + research.permitAllowance;
-    setQuoteText('quote-base-label', 'Materials, equipment & permit allowances');
-    setQuoteText('quote-base-amount', formatCurrency(directAllowances));
-    setQuoteText('quote-feature-label', `Trade labor · ${research.laborHours} estimated hours`);
-    setQuoteText('quote-feature-amount', formatCurrency(research.laborTotal));
-    setQuoteText('quote-coordination-amount', formatCurrency(research.coordination + research.contingency));
-    setQuoteText('quote-total', formatCurrency(research.estimateTotal));
+    setQuoteText('quote-total', `About ${formatCurrency(research.estimateTotal)}`);
     if (research.argTimelineWeeks) setQuoteText('quote-timeline', `Approximately ${research.argTimelineWeeks} week${research.argTimelineWeeks === 1 ? '' : 's'}`);
-
-    renderDetailLines('quote-material-lines', research.materials || [], 'description', line => `${line.quantity} ${line.unit} · ${formatCurrency(line.total)}`);
-    renderDetailLines('quote-labor-lines', research.labor || [], 'trade', line => `${line.hours} hrs @ ${formatCurrency(line.hourlyRate)} · ${formatCurrency(line.total)}`);
-    const breakdown = document.getElementById('quote-breakdown');
-    if (breakdown) breakdown.hidden = false;
 
     const sourceList = document.getElementById('quote-source-list');
     const sourcePanel = document.getElementById('quote-sources');
@@ -226,7 +215,7 @@
     setQuoteText('quote-feature-label', features.length ? `${features.length} selected improvement${features.length === 1 ? '' : 's'}` : 'Selected feature allowance');
     setQuoteText('quote-feature-amount', formatCurrency(featureAmount));
     setQuoteText('quote-coordination-amount', formatCurrency(coordination));
-    setQuoteText('quote-total', formatCurrency(total));
+    setQuoteText('quote-total', `About ${formatCurrency(total)}`);
     setQuoteText('quote-description', visionInput.value.trim());
 
     captureTransformationLead({
