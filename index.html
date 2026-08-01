@@ -358,6 +358,16 @@
               </label>
             </div>
 
+            <div class="quote-inputs">
+              <div class="quote-inputs-head"><span>Instant quote details</span><small>Used only to prepare your preliminary 60-day estimate.</small></div>
+              <div class="quote-input-grid">
+                <label><span>Your name</span><input id="quote-customer-name" type="text" maxlength="80" autocomplete="name" placeholder="Homeowner name"></label>
+                <label><span>Project ZIP code</span><input id="quote-zip" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="11703"></label>
+                <label><span>Approximate project size</span><select id="quote-size"><option value="small">Small / focused area</option><option value="standard" selected>Typical room or project</option><option value="large">Large or extensive project</option></select></label>
+                <label><span>Finish level</span><select id="quote-finish"><option value="essential">Quality essentials</option><option value="signature" selected>ARG signature</option><option value="premium">Premium finishes</option></select></label>
+              </div>
+            </div>
+
             <div class="room-feature-builder" id="room-feature-builder" hidden>
               <div class="room-feature-head">
                 <div><span>Choose features for this space</span><small>Select any improvements you would like included in the concept.</small></div>
@@ -428,6 +438,37 @@
                 <div><small>READY TO EXPLORE THIS FOR REAL?</small><h4>Let’s turn the concept into a construction plan.</h4></div>
                 <a href="#consultation" class="button button-primary">Request a Project Consultation <span>↗</span></a>
               </div>
+
+              <section class="instant-quote" id="instant-quote" aria-labelledby="instant-quote-title">
+                <header class="quote-header">
+                  <div class="quote-brand"><img src="assets/images/arg-logo.png" alt="ARG Home Improvements & Remodeling"><div><strong>ARG HOME IMPROVEMENTS</strong><span>&amp; REMODELING, INC.</span><small>Licensed &amp; Insured · Nassau HIC #201251</small></div></div>
+                  <div class="quote-heading"><span>PRELIMINARY PROJECT QUOTE</span><h3 id="instant-quote-title">Instant renovation estimate</h3><small>Call or text 631-579-3122</small></div>
+                </header>
+                <div class="quote-meta">
+                  <div><span>Quote number</span><strong id="quote-number">ARG-000000</strong></div>
+                  <div><span>Prepared for</span><strong id="quote-customer">Online project inquiry</strong></div>
+                  <div><span>Issued</span><strong id="quote-issued"></strong></div>
+                  <div><span>Valid through</span><strong id="quote-valid-through"></strong></div>
+                </div>
+                <div class="quote-scope">
+                  <div><span>Project</span><strong id="quote-project"></strong></div>
+                  <div><span>Design direction</span><strong id="quote-style"></strong></div>
+                  <div><span>Location</span><strong id="quote-location">Long Island, NY</strong></div>
+                </div>
+                <div class="quote-table" role="table" aria-label="Estimated project scope">
+                  <div class="quote-row quote-table-head" role="row"><span role="columnheader">Estimated scope</span><span role="columnheader">Amount</span></div>
+                  <div class="quote-row" role="row"><span role="cell" id="quote-base-label">Core renovation allowance</span><strong role="cell" id="quote-base-amount"></strong></div>
+                  <div class="quote-row" role="row"><span role="cell" id="quote-feature-label">Selected feature allowance</span><strong role="cell" id="quote-feature-amount"></strong></div>
+                  <div class="quote-row" role="row"><span role="cell">Design, coordination &amp; project protection</span><strong role="cell" id="quote-coordination-amount"></strong></div>
+                  <div class="quote-row quote-total" role="row"><span role="cell">Preliminary project estimate</span><strong role="cell" id="quote-total"></strong></div>
+                </div>
+                <div class="quote-inclusions"><strong>Concept scope</strong><p id="quote-description"></p><ul id="quote-features"></ul></div>
+                <div class="quote-terms">
+                  <strong>Estimate terms</strong>
+                  <p>This preliminary quote is valid for 60 days from the issue date. It is an initial planning estimate based solely on the selections and image supplied online—not a contract or offer to perform work. Final scope and price require an ARG site visit, measurements, material selections, structural and code review, and a signed written agreement. Permits, engineering, concealed conditions, hazardous-material remediation, utility upgrades and sales tax are excluded unless specifically stated in the final agreement.</p>
+                </div>
+                <footer class="quote-footer"><div><strong>ARG Home Improvements &amp; Remodeling, Inc.</strong><span>North Babylon, New York · Serving Nassau &amp; Suffolk County</span></div><div class="quote-actions"><button type="button" class="button button-dark" id="print-quote">Print / Save PDF</button><a class="button button-primary" href="#consultation">Schedule Site Verification</a></div></footer>
+              </section>
             </div>
           </div>
         </div>
@@ -653,6 +694,6 @@
 
   <a class="floating-cta" href="#consultation"><span>Start Your Project</span><b>↗</b></a>
   <script src="assets/js/main.js?v=ai-visualizer-1" defer></script>
-  <script src="assets/js/visualizer.js?v=4" defer></script>
+  <script src="assets/js/visualizer.js?v=5" defer></script>
 </body>
 </html>

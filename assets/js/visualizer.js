@@ -35,6 +35,11 @@
   const featureBuilder = document.getElementById('room-feature-builder');
   const featureGrid = document.getElementById('room-feature-grid');
   const clearFeatures = document.getElementById('clear-room-features');
+  const quoteCustomerName = document.getElementById('quote-customer-name');
+  const quoteZip = document.getElementById('quote-zip');
+  const quoteSize = document.getElementById('quote-size');
+  const quoteFinish = document.getElementById('quote-finish');
+  const printQuote = document.getElementById('print-quote');
 
   let processedImage = '';
   let activePointer = null;
@@ -66,6 +71,83 @@
   };
 
   const selectedFeatures = () => [...featureGrid.querySelectorAll('input:checked')].map(input => input.value);
+
+  const quoteBaseRates = {
+    'Kitchen': 42000,
+    'Bathroom': 24000,
+    'Living room': 18000,
+    'Basement': 48000,
+    'Bedroom': 16000,
+    'Home exterior': 32000,
+    'Backyard / patio': 28000,
+    'Pool area': 65000,
+    'Home addition': 125000,
+    'Other area': 20000
+  };
+  const quoteSizeFactors = { small: 0.72, standard: 1, large: 1.45 };
+  const quoteFinishFactors = { essential: 0.82, signature: 1, premium: 1.3 };
+  const quoteFeatureAllowances = [
+    [/second story/i, 45000], [/in-ground pool/i, 60000], [/pool house/i, 45000],
+    [/ensuite bathroom|full bathroom/i, 24000], [/larger kitchen/i, 30000],
+    [/outdoor kitchen/i, 18000], [/wet bar/i, 12000], [/open (a wall|the kitchen)/i, 14000],
+    [/fireplace/i, 9000], [/spa/i, 14000], [/walk-in shower/i, 8500],
+    [/soaking tub/i, 5500], [/double vanity/i, 4500], [/covered (front porch|patio)/i, 16000],
+    [/sliding (glass )?doors/i, 7500], [/larger windows|replace windows/i, 6500],
+    [/siding/i, 14000], [/roofline/i, 12000], [/stone or brick/i, 10000],
+    [/pavers/i, 9000], [/pergola/i, 8000], [/custom millwork|built-in/i, 5500],
+    [/flooring/i, 6500], [/lighting/i, 2500], [/storage|cabinetry|pantry/i, 4500]
+  ];
+
+  const formatCurrency = value => new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD', maximumFractionDigits: 0
+  }).format(value);
+
+  const setQuoteText = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  };
+
+  const allowanceForFeature = feature => {
+    const match = quoteFeatureAllowances.find(([pattern]) => pattern.test(feature));
+    return match ? match[1] : 1750;
+  };
+
+  const buildInstantQuote = () => {
+    const features = selectedFeatures();
+    const issued = new Date();
+    const validThrough = new Date(issued);
+    validThrough.setDate(validThrough.getDate() + 60);
+    const dateFormat = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const core = Math.round((quoteBaseRates[spaceInput.value] || 20000)
+      * (quoteSizeFactors[quoteSize?.value] || 1)
+      * (quoteFinishFactors[quoteFinish?.value] || 1));
+    const featureAmount = features.reduce((sum, feature) => sum + allowanceForFeature(feature), 0);
+    const coordination = Math.round((core + featureAmount) * 0.075);
+    const total = Math.round((core + featureAmount + coordination) / 250) * 250;
+    const quoteSuffix = `${String(issued.getFullYear()).slice(-2)}${String(issued.getMonth() + 1).padStart(2, '0')}${String(issued.getDate()).padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    setQuoteText('quote-number', `ARG-${quoteSuffix}`);
+    setQuoteText('quote-customer', quoteCustomerName?.value.trim() || 'Online project inquiry');
+    setQuoteText('quote-issued', dateFormat.format(issued));
+    setQuoteText('quote-valid-through', dateFormat.format(validThrough));
+    setQuoteText('quote-project', spaceInput.value);
+    setQuoteText('quote-style', styleInput.value);
+    setQuoteText('quote-location', quoteZip?.value.trim() ? `ZIP ${quoteZip.value.trim()} · Long Island, NY` : 'Long Island, NY');
+    setQuoteText('quote-base-label', `${spaceInput.value} renovation allowance`);
+    setQuoteText('quote-base-amount', formatCurrency(core));
+    setQuoteText('quote-feature-label', features.length ? `${features.length} selected improvement${features.length === 1 ? '' : 's'}` : 'Selected feature allowance');
+    setQuoteText('quote-feature-amount', formatCurrency(featureAmount));
+    setQuoteText('quote-coordination-amount', formatCurrency(coordination));
+    setQuoteText('quote-total', formatCurrency(total));
+    setQuoteText('quote-description', visionInput.value.trim());
+
+    const featureList = document.getElementById('quote-features');
+    if (featureList) {
+      featureList.innerHTML = features.length
+        ? features.map(feature => `<li>${feature.replace(/[<>&]/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[character]))}</li>`).join('')
+        : '<li>Scope to be confirmed during the complimentary site verification.</li>';
+    }
+  };
 
   const renderRoomFeatures = (room) => {
     const options = roomFeatureOptions[room] || [];
@@ -382,6 +464,7 @@
       loaderStages.forEach(stage => { stage.classList.remove('is-active'); stage.classList.add('is-complete'); });
       setLoading(false);
       generated.hidden = false;
+      buildInstantQuote();
       setComparison(50);
       generated.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (error) {
@@ -398,4 +481,6 @@
     setComparison(50);
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
+
+  printQuote?.addEventListener('click', () => window.print());
 })();
