@@ -36,8 +36,11 @@
 
   const hashTarget = window.location.hash && document.querySelector(window.location.hash);
   if (hashTarget) {
+    document.documentElement.style.scrollBehavior = 'auto';
+    hashTarget.scrollIntoView();
     hashTarget.classList.add('visible');
     hashTarget.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    window.requestAnimationFrame(() => document.documentElement.style.removeProperty('scroll-behavior'));
   }
 
   const observer = new IntersectionObserver((entries) => {
