@@ -28,7 +28,7 @@ export default async (request) => {
   } catch (error) {
     console.error('Visualizer status error', error);
     return respond({
-      error: 'The AI backend is unavailable. Confirm this site was deployed through Netlify Git or the Netlify CLI so Functions were built and published.',
+      error: 'The design studio is temporarily unavailable. Please call or text 631-579-3122 for assistance.',
       code: 'BACKEND_UNAVAILABLE'
     }, 503);
   }

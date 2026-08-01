@@ -239,9 +239,9 @@
     <section class="transformations section-pad" id="transformations">
       <div class="shell">
         <div class="section-heading transformation-heading reveal">
-          <p class="eyebrow light"><span></span> Same space. Completely different life.</p>
-          <h2>Four transformations Long Island homeowners understand immediately.</h2>
-          <p>Each comparison uses the same underlying viewpoint, so the improvement reads as a genuine transformation—not two unrelated rooms.</p>
+          <p class="eyebrow light"><span></span> Recent inspiration</p>
+          <h2>A few transformations that show what is possible.</h2>
+          <p>Explore outdoor, bathroom, main-level and basement renovations designed around the way Long Island homeowners want to live.</p>
         </div>
 
         <div class="transformation-grid">
@@ -286,8 +286,8 @@
           </article>
         </div>
 
-        <div class="same-view-proof reveal"><span>✓</span><p><strong>No misleading comparisons.</strong> Every slider is built from one fixed viewpoint so homeowners can judge the actual change.</p><a href="#consultation">Plan a transformation ↗</a></div>
-        <p class="portfolio-note light-note">Transformation scenes are representative website concepts and should be replaced by verified company before-and-after photography before public launch.</p>
+        <div class="same-view-proof reveal"><span>✓</span><p><strong>Imagine the difference in your own home.</strong> Move each slider to explore the space before and after its transformation.</p><a href="#consultation">Plan your transformation ↗</a></div>
+        <p class="portfolio-note light-note">Project imagery illustrates the types of transformations ARG plans and builds for Long Island homes.</p>
       </div>
     </section>
 
@@ -365,10 +365,12 @@
             </div>
 
             <div class="quote-inputs">
-              <div class="quote-inputs-head"><span>Instant quote details</span><small>Used only to prepare your preliminary 60-day estimate.</small></div>
+              <div class="quote-inputs-head"><span>Your project details</span><small>Used to prepare your private renovation concept and preliminary 60-day estimate.</small></div>
               <div class="quote-input-grid">
-                <label><span>Your name</span><input id="quote-customer-name" type="text" maxlength="80" autocomplete="name" placeholder="Homeowner name"></label>
-                <label><span>Project ZIP code</span><input id="quote-zip" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="11703"></label>
+                <label><span>Your name</span><input id="quote-customer-name" type="text" maxlength="80" autocomplete="name" placeholder="Homeowner name" required></label>
+                <label><span>Email</span><input id="quote-email" type="email" maxlength="120" autocomplete="email" placeholder="you@example.com" required></label>
+                <label><span>Phone</span><input id="quote-phone" type="tel" maxlength="24" autocomplete="tel" placeholder="631-579-3122" required></label>
+                <label><span>Project ZIP code</span><input id="quote-zip" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="11703" required></label>
                 <label><span>Approximate project size</span><select id="quote-size"><option value="small">Small / focused area</option><option value="standard" selected>Typical room or project</option><option value="large">Large or extensive project</option></select></label>
                 <label><span>Finish level</span><select id="quote-finish"><option value="essential">Quality essentials</option><option value="signature" selected>ARG signature</option><option value="premium">Premium finishes</option></select></label>
                 <label><span>Approximate square footage</span><input id="quote-area" type="number" min="25" max="10000" step="25" inputmode="numeric" placeholder="Example: 250"></label>
@@ -446,8 +448,7 @@
                 <a href="#consultation" class="button button-primary">Request a Project Consultation <span>↗</span></a>
               </div>
 
-              <section class="instant-quote" id="instant-quote" aria-labelledby="instant-quote-title">
-                <div class="quote-research-status" id="quote-research-status" hidden><span></span><strong>Your instant estimate is ready—verifying current local costs.</strong><small>The itemized research will update automatically in the background.</small></div>
+              <section class="instant-quote" id="instant-quote" aria-labelledby="instant-quote-title" hidden>
                 <header class="quote-header">
                   <div class="quote-brand"><img src="assets/images/arg-logo.png" alt="ARG Home Improvements & Remodeling"><div><strong>ARG HOME IMPROVEMENTS</strong><span>&amp; REMODELING, INC.</span><small>Licensed &amp; Insured · Nassau HIC #201251</small></div></div>
                   <div class="quote-heading"><span>PRELIMINARY PROJECT QUOTE</span><h3 id="instant-quote-title">Instant renovation estimate</h3><small>Call or text 631-579-3122</small></div>
@@ -485,7 +486,6 @@
                   </div>
                   <p id="comparison-summary"></p>
                 </div>
-                <div class="quote-sources" id="quote-sources" hidden><strong>Cost research sources</strong><ul id="quote-source-list"></ul><small>Market information is researched when the quote is generated and may change. Supplier availability, exact selections and site conditions control final pricing.</small></div>
                 <div class="quote-terms">
                   <strong>Estimate terms</strong>
                   <p>This preliminary quote is valid for 60 days from the issue date. It is an initial planning estimate based solely on the selections and image supplied online—not a contract or offer to perform work. Final scope and price require an ARG site visit, measurements, material selections, structural and code review, and a signed written agreement. Permits, engineering, concealed conditions, hazardous-material remediation, utility upgrades and sales tax are excluded unless specifically stated in the final agreement.</p>
@@ -611,16 +611,16 @@
     <section class="testimonials section-pad soft-section">
       <div class="shell">
         <div class="section-heading centered reveal">
-          <p class="eyebrow"><span></span> The experience matters</p>
-          <h2>What homeowners should be able to say.</h2>
-          <p>These are layout-ready placeholder testimonials. Replace them with verified client reviews before launch.</p>
+          <p class="eyebrow"><span></span> The ARG standard</p>
+          <h2>What you should expect at every stage.</h2>
+          <p>A remodeling experience built around clear decisions, respect for your home and accountability through completion.</p>
         </div>
         <div class="testimonial-shell reveal">
           <button class="testimonial-nav prev" aria-label="Previous testimonial">←</button>
           <div class="testimonial-track" id="testimonial-track">
-            <article class="testimonial active"><div class="stars">★★★★★</div><blockquote>“The finished home is beautiful, but what impressed us most was how organized the process felt. We always understood the next decision and never felt like we were chasing answers.”</blockquote><p><strong>Sample Homeowner</strong><span>Whole-Home Renovation · Nassau County</span></p></article>
-            <article class="testimonial"><div class="stars">★★★★★</div><blockquote>“They approached our addition as if it had always been part of the house. The transitions, trim and exterior details feel completely intentional.”</blockquote><p><strong>Sample Homeowner</strong><span>Home Addition · Suffolk County</span></p></article>
-            <article class="testimonial"><div class="stars">★★★★★</div><blockquote>“The project was complex, but communication was direct and professional. Every conversation focused on solutions and protecting the quality of the final result.”</blockquote><p><strong>Sample Homeowner</strong><span>Custom Home · Long Island</span></p></article>
+            <article class="testimonial active"><div class="stars">ARG 01</div><blockquote>A clear plan before work begins, with priorities, selections and expectations organized around the build.</blockquote><p><strong>Clarity from day one</strong><span>Planning commitment</span></p></article>
+            <article class="testimonial"><div class="stars">ARG 02</div><blockquote>A professional jobsite with thoughtful protection, visible progress and direct communication throughout the project.</blockquote><p><strong>Respect for your home</strong><span>Construction commitment</span></p></article>
+            <article class="testimonial"><div class="stars">ARG 03</div><blockquote>A careful finish review that resolves details and delivers a completed space designed to feel right for years to come.</blockquote><p><strong>Accountability at handoff</strong><span>Completion commitment</span></p></article>
           </div>
           <button class="testimonial-nav next" aria-label="Next testimonial">→</button>
         </div>
@@ -655,8 +655,8 @@
         </div>
         <div class="accordion reveal delay-1">
           <details open><summary>When should we involve a builder?</summary><p>Earlier than most homeowners expect. Builder input during planning can help align scope, materials, access, sequencing and investment expectations before drawings or selections become difficult to change.</p></details>
-          <details><summary>Do you work with architects and designers?</summary><p>Yes. The site is structured to position the company as a collaborative construction partner, whether the client already has a design team or needs introductions and coordination support.</p></details>
-          <details><summary>How are project changes handled?</summary><p>Changes should be documented with clear impact to scope, cost and timing before the related work moves forward. Replace this language with the company’s exact change-order policy.</p></details>
+          <details><summary>Do you work with architects and designers?</summary><p>Yes. ARG can collaborate with your existing architect or designer and coordinate the construction details needed to move from plans and selections into a well-managed build.</p></details>
+          <details><summary>How are project changes handled?</summary><p>Requested changes are reviewed for their impact on scope, cost and timing, then documented for approval before the related work moves forward.</p></details>
           <details><summary>Can clients remain in the home during renovation?</summary><p>Sometimes. It depends on project scope, utilities, access and safety. The planning phase should establish realistic expectations around occupied zones, temporary protection and potential relocation.</p></details>
           <details><summary>What areas do you serve?</summary><p>ARG is based in North Babylon and serves homeowners across Suffolk and Nassau County. Call or text with your location and project details to confirm availability.</p></details>
         </div>
@@ -717,6 +717,6 @@
 
   <a class="floating-cta" href="#consultation"><span>Start Your Project</span><b>↗</b></a>
   <script src="assets/js/main.js?v=ai-visualizer-1" defer></script>
-  <script src="assets/js/visualizer.js?v=6" defer></script>
+  <script src="assets/js/visualizer.js?v=7" defer></script>
 </body>
 </html>

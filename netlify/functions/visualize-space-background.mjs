@@ -6,13 +6,13 @@ const cleanJobId = (value) => String(value || '').replace(/[^a-zA-Z0-9_-]/g, '')
 function friendlyOpenAIError(status, data) {
   const raw = data?.error?.message || data?.message || 'OpenAI could not generate this concept.';
   const code = data?.error?.code || data?.error?.type || '';
-  if (status === 401) return 'The OpenAI API key is invalid or was not saved correctly in Netlify.';
-  if (status === 403) return 'This OpenAI account does not currently have access to the image model. Organization verification may be required.';
+  if (status === 401) return 'The design studio is temporarily unavailable. Please try again shortly.';
+  if (status === 403) return 'The design studio is temporarily unavailable. Please try again shortly.';
   if (status === 429) {
-    if (/quota|billing|credit/i.test(raw)) return 'The OpenAI API account has no available billing credit or quota.';
-    return 'The OpenAI API account is temporarily rate-limited. Please try again shortly.';
+    if (/quota|billing|credit/i.test(raw)) return 'The design studio is temporarily busy. Please try again shortly.';
+    return 'The design studio is temporarily busy. Please try again shortly.';
   }
-  if (status === 400 && /model/i.test(raw)) return `The selected OpenAI image model is unavailable. ${raw}`;
+  if (status === 400 && /model/i.test(raw)) return 'The design studio could not complete this request. Please try a different photo.';
   if (status === 400 && /image|format|file|url/i.test(raw)) return `OpenAI could not use the uploaded image. ${raw}`;
   if (status >= 500) return 'OpenAI had a temporary image-generation problem. Please try again.';
   return code ? `${raw} (${code})` : raw;
@@ -43,7 +43,7 @@ export default async (request) => {
     if (!body) throw new Error('The uploaded visualizer request could not be found. Please submit it again.');
 
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) throw new Error('The AI visualizer is not connected. Add OPENAI_API_KEY in Netlify environment variables and redeploy.');
+    if (!apiKey) throw new Error('The design studio is temporarily unavailable. Please call or text 631-579-3122 for assistance.');
 
     const imageDataUrl = String(body.imageDataUrl || '').trim();
     const space = clean(body.space, 80);
