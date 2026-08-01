@@ -1,4 +1,4 @@
-LI BUILT — NETLIFY DRAG-AND-DROP WEBSITE
+ARG Home Improvements & Remodeling — NETLIFY DRAG-AND-DROP WEBSITE
 ========================================
 
 DEPLOY IN UNDER 2 MINUTES
@@ -11,9 +11,9 @@ IMPORTANT BEFORE PUBLIC LAUNCH
 The current brand name, phone, email, testimonials, company details and portfolio descriptions are polished placeholders because final company information was not supplied.
 
 Search and replace these items in index.html:
-- LI BUILT
-- (516) 555-0147
-- projects@libuilt.com
+- ARG Home Improvements & Remodeling
+- 631-579-3122
+- Call or text 631-579-3122
 - License / insurance wording, if the company wants it displayed
 - Nassau and Suffolk service areas
 - Sample testimonials

@@ -1,4 +1,4 @@
-LI BUILT AI VISUALIZER — ROUTING + BACKGROUND PAYLOAD FIX
+ARG Home Improvements & Remodeling AI VISUALIZER — ROUTING + BACKGROUND PAYLOAD FIX
 
 This package fixes:
 1. 404 when starting the background visualizer.
