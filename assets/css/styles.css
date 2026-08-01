@@ -390,3 +390,20 @@ html,body,button,input,select,textarea{font-family:"Inter","Proxima Nova","Aveni
 @media(max-width:760px){.quote-scope{grid-template-columns:1fr}.quote-scope>div:last-child{border-left:3px solid #1598ec}}
 @media(max-width:620px){.process-grid{margin-top:38px}.process-step{min-height:320px;padding:22px}.step-icon{width:74px;height:74px;margin-top:8px}.step-icon svg{width:61px;height:61px}.process-step>span:last-child{left:22px}.visualizer-intro{padding:0 5px;margin-bottom:30px}.visualizer-intro h2{font-size:42px}.visualizer-shell{border-radius:18px}.visualizer-form{padding:24px 16px}.quote-inputs{padding:17px 14px}.visualizer-result{min-height:480px}.generated-result{padding:16px 10px}.concept-comparison{border-radius:13px;aspect-ratio:4/3}.generated-head{padding-inline:4px}.result-reset{width:auto}.instant-quote{border-radius:12px}}
 @media(prefers-reduced-motion:reduce){.process-grid::before,.process-step::before,.step-icon,.step-icon .icon-blue{animation:none!important}}
+
+/* Animated visualizer preview */
+.result-placeholder{width:min(100%,520px);max-width:none;padding:34px}
+.result-placeholder-art{position:relative;width:100%;height:auto!important;aspect-ratio:16/10;display:block!important;overflow:hidden;border:1px solid rgba(104,201,255,.3)!important;border-radius:20px!important;background:#101923!important;box-shadow:0 22px 55px rgba(0,0,0,.32)!important}
+.result-placeholder-art::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 -70px 80px rgba(2,8,17,.2)}
+.placeholder-after,.placeholder-before img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.placeholder-after{filter:saturate(.92) contrast(1.02)}
+.placeholder-before{position:absolute;inset:0;z-index:2;overflow:hidden;clip-path:inset(0 48% 0 0);animation:placeholderReveal 7s cubic-bezier(.65,0,.35,1) infinite}
+.placeholder-before img{filter:saturate(.65) brightness(.78)}
+.placeholder-label{position:absolute!important;top:16px;z-index:6;padding:8px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(2,8,17,.72);backdrop-filter:blur(8px);color:#fff!important;font-size:8px!important;font-weight:800;letter-spacing:.15em!important;text-transform:uppercase}
+.placeholder-label-before{left:16px}.placeholder-label-after{right:16px;background:rgba(8,125,204,.82)}
+.placeholder-divider{position:absolute!important;z-index:5;top:0;bottom:0;left:52%;width:2px!important;height:auto!important;border-radius:0!important;background:rgba(255,255,255,.9)!important;color:#fff!important;animation:placeholderSlide 7s cubic-bezier(.65,0,.35,1) infinite}
+.placeholder-divider b{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:48px;height:48px;border:2px solid #d9e3ec;border-radius:50%;background:linear-gradient(135deg,#1598ec,#087dcc);box-shadow:0 0 0 4px #07111f,0 0 0 6px #1598ec,0 10px 25px rgba(0,0,0,.3);font-size:16px;transform:translate(-50%,-50%)}
+@keyframes placeholderReveal{0%,12%{clip-path:inset(0 80% 0 0)}42%,58%{clip-path:inset(0 18% 0 0)}88%,100%{clip-path:inset(0 80% 0 0)}}
+@keyframes placeholderSlide{0%,12%{left:20%}42%,58%{left:82%}88%,100%{left:20%}}
+@media(max-width:620px){.result-placeholder{padding:24px 16px}.result-placeholder-art{border-radius:15px!important}.placeholder-divider b{width:42px;height:42px}.placeholder-label{top:11px;padding:7px 9px}.placeholder-label-before{left:11px}.placeholder-label-after{right:11px}}
+@media(prefers-reduced-motion:reduce){.placeholder-before,.placeholder-divider{animation:none!important}.placeholder-before{clip-path:inset(0 50% 0 0)}.placeholder-divider{left:50%}}
