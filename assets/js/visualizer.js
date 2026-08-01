@@ -183,7 +183,7 @@
         link.rel = 'noopener noreferrer';
         link.textContent = source.title;
         item.append(link);
-        if (source.note) item.append(document.createTextNode(` — ${source.note}`));
+        if (source.note) item.append(document.createTextNode(`: ${source.note}`));
         return item;
       }));
       sourcePanel.hidden = false;
