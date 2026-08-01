@@ -42,6 +42,7 @@
   const quoteEmail = document.getElementById('quote-email');
   const quotePhone = document.getElementById('quote-phone');
   const quoteZip = document.getElementById('quote-zip');
+  const quoteConsent = document.getElementById('quote-consent');
   const quoteSize = document.getElementById('quote-size');
   const quoteFinish = document.getElementById('quote-finish');
   const quoteArea = document.getElementById('quote-area');
@@ -264,6 +265,7 @@
       quoteTotal: total,
       estimatedTimeline: `${timelineLow}–${timelineHigh} weeks`,
       quoteValidUntil: validThrough.toISOString(),
+      consent: Boolean(quoteConsent?.checked),
       source: 'Website Transformation Tool',
       jobId
     });
@@ -357,6 +359,7 @@
 
   const setLoading = (isLoading) => {
     submitButton.disabled = isLoading;
+    result.setAttribute('aria-busy', String(isLoading));
     submitButton.classList.toggle('is-loading', isLoading);
     submitButton.innerHTML = isLoading ? 'Generating... Please wait <span>•</span>' : 'Generate My Renovation Concept <span>↗</span>';
     if (isLoading) {
@@ -583,6 +586,16 @@
     }
     if (!spaceInput.value || !styleInput.value || visionInput.value.trim().length < 12) {
       showError('Please select the space and style and describe the renovation you want.');
+      return;
+    }
+    const contactIsValid = quoteCustomerName?.value.trim()
+      && quoteEmail?.validity.valid
+      && quotePhone?.value.trim().length >= 7
+      && /^\d{5}$/.test(quoteZip?.value.trim() || '')
+      && quoteConsent?.checked;
+    if (!contactIsValid) {
+      showError('Please complete your contact details, enter a five-digit ZIP code, and accept the privacy consent before generating your concept.');
+      quoteCustomerName?.closest('.quote-inputs')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 

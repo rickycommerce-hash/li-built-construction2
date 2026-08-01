@@ -2,17 +2,13 @@ import { getStore } from '@netlify/blobs';
 
 const headers = {
   'Content-Type': 'application/json; charset=utf-8',
-  'Cache-Control': 'no-store',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  'Cache-Control': 'no-store'
 };
 
 const respond = (body, status = 200) => new Response(JSON.stringify(body), { status, headers });
 const text = (value, max = 500) => String(value ?? '').trim().slice(0, max);
 
 export default async request => {
-  if (request.method === 'OPTIONS') return respond({ ok: true });
   if (request.method !== 'POST') return respond({ error: 'Method not allowed.' }, 405);
 
   let body;
@@ -41,6 +37,7 @@ export default async request => {
     quoteTotal: Math.max(0, Number(body.quoteTotal) || 0),
     estimatedTimeline: text(body.estimatedTimeline, 60),
     quoteValidUntil: text(body.quoteValidUntil, 40),
+    consent: Boolean(body.consent),
     source: 'Website Transformation Tool',
     jobId: text(body.jobId, 100)
   };
@@ -74,4 +71,4 @@ export default async request => {
   return respond({ ok: true }, 202);
 };
 
-export const config = { path: '/api/transformation-lead', method: ['POST', 'OPTIONS'] };
+export const config = { path: '/api/transformation-lead', method: 'POST' };
