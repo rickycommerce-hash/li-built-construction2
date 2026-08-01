@@ -5,6 +5,9 @@
   if (!form) return;
 
   const fileInput = document.getElementById('space-photo');
+  const cameraInput = document.getElementById('camera-photo');
+  const takePhotoButton = document.getElementById('take-photo');
+  const choosePhotoButton = document.getElementById('choose-photo');
   const uploadZone = document.getElementById('upload-zone');
   const preview = document.getElementById('upload-preview');
   const replaceButton = document.getElementById('replace-photo');
@@ -386,10 +389,10 @@
     reader.readAsDataURL(file);
   });
 
-  const loadSelectedFile = async () => {
+  const loadSelectedFile = async file => {
     showError('');
     try {
-      processedImage = await processImage(fileInput.files?.[0]);
+      processedImage = await processImage(file || fileInput.files?.[0]);
       preview.src = processedImage;
       preview.hidden = false;
       replaceButton.hidden = false;
@@ -397,11 +400,15 @@
     } catch (error) {
       processedImage = '';
       fileInput.value = '';
+      if (cameraInput) cameraInput.value = '';
       showError(error.message);
     }
   };
 
-  fileInput.addEventListener('change', loadSelectedFile);
+  fileInput.addEventListener('change', () => loadSelectedFile(fileInput.files?.[0]));
+  cameraInput?.addEventListener('change', () => loadSelectedFile(cameraInput.files?.[0]));
+  takePhotoButton?.addEventListener('click', () => cameraInput?.click());
+  choosePhotoButton?.addEventListener('click', () => fileInput.click());
   replaceButton.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -435,7 +442,7 @@
     const transfer = new DataTransfer();
     transfer.items.add(file);
     fileInput.files = transfer.files;
-    loadSelectedFile();
+    loadSelectedFile(file);
   });
 
   const setComparison = (percentage) => {
