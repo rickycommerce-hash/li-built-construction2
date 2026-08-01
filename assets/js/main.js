@@ -73,8 +73,12 @@
   const filters = document.querySelectorAll('.filter');
   const cards = document.querySelectorAll('.project-card');
   filters.forEach(button => button.addEventListener('click', () => {
-    filters.forEach(item => item.classList.remove('active'));
+    filters.forEach(item => {
+      item.classList.remove('active');
+      item.setAttribute('aria-pressed', 'false');
+    });
     button.classList.add('active');
+    button.setAttribute('aria-pressed', 'true');
     const filter = button.dataset.filter;
     cards.forEach(card => {
       card.classList.toggle('hidden-card', filter !== 'all' && card.dataset.category !== filter);
@@ -90,7 +94,7 @@
           stage: '01',
           label: 'Original Condition',
           title: 'Above-Ground Pool and Basic Yard',
-          img: 'assets/images/pool-before.jpg',
+          img: 'assets/images/ba-pool-before.jpg',
           alt: 'Backyard before construction with an above-ground pool',
           desc: 'The yard started with a simple above-ground pool and minimal design around it.'
         },
@@ -98,7 +102,7 @@
           stage: '02',
           label: 'Construction Phase',
           title: 'Excavation and Pool Build Underway',
-          img: 'assets/images/pool-progress.jpg',
+          img: 'assets/images/pool-progress-optimized.jpg',
           alt: 'Backyard during in-ground pool construction',
           desc: 'Excavation, forming, and structural work began to reshape the property into a more integrated outdoor space.'
         },
@@ -120,7 +124,7 @@
           stage: '01',
           label: 'Original Condition',
           title: 'Older Vanity and Tile Layout',
-          img: 'assets/images/bath-before.jpg',
+          img: 'assets/images/ba-bath-before.jpg',
           alt: 'Bathroom before renovation with dated finishes',
           desc: 'The starting point was functional but dated, with aging finishes and a room that felt flat and underdesigned.'
         },
@@ -128,7 +132,7 @@
           stage: '02',
           label: 'Construction Phase',
           title: 'Vanity Framing and Finish Prep',
-          img: 'assets/images/bath-progress.jpg',
+          img: 'assets/images/bath-progress-optimized.jpg',
           alt: 'Bathroom renovation in progress',
           desc: 'During construction, the vanity framing, wall prep, plumbing rough-in, and finish groundwork started shaping the new space.'
         },
@@ -158,7 +162,7 @@
           stage: '02',
           label: 'Construction Phase',
           title: 'Opening Walls and Reworking the Layout',
-          img: 'assets/images/living-progress.jpg',
+          img: 'assets/images/living-progress-optimized.jpg',
           alt: 'Living area during renovation and reconfiguration',
           desc: 'Framing, drywall, and layout changes opened the space up and set the stage for a more functional family area.'
         },
@@ -180,7 +184,7 @@
           stage: '01',
           label: 'Original Condition',
           title: 'Raw Unfinished Basement',
-          img: 'assets/images/basement-before.jpg',
+          img: 'assets/images/ba-basement-before.jpg',
           alt: 'Basement before finishing with exposed structure',
           desc: 'The lower level began as a raw utility-style basement with exposed structure, bare concrete, and very limited livability.'
         },
@@ -188,7 +192,7 @@
           stage: '02',
           label: 'Construction Phase',
           title: 'Framing, Electrical, and Drywall Underway',
-          img: 'assets/images/basement-progress.jpg',
+          img: 'assets/images/basement-progress-optimized.jpg',
           alt: 'Basement under renovation with framing and drywall',
           desc: 'The build phase introduced framing, electrical, insulation, and drywall to shape a usable finished environment.'
         },
@@ -265,7 +269,22 @@
     if (event.target === modal) closeModal();
   });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && modal && !modal.hidden) closeModal();
+    if (!modal || modal.hidden) return;
+    if (event.key === 'Escape') closeModal();
+    if (event.key === 'Tab') {
+      const focusable = [...modal.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+        .filter(element => !element.hidden && element.getClientRects().length);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
   });
   modal?.querySelector('a.button')?.addEventListener('click', closeModal);
 
@@ -368,14 +387,14 @@
   const showTestimonial = (index) => {
     if (!testimonials.length) return;
     testimonialIndex = (index + testimonials.length) % testimonials.length;
-    testimonials.forEach((item, i) => item.classList.toggle('active', i === testimonialIndex));
+    testimonials.forEach((item, i) => {
+      const active = i === testimonialIndex;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-hidden', String(!active));
+    });
   };
   prev?.addEventListener('click', () => showTestimonial(testimonialIndex - 1));
   next?.addEventListener('click', () => showTestimonial(testimonialIndex + 1));
-  if (testimonials.length) {
-    let testimonialTimer = setInterval(() => showTestimonial(testimonialIndex + 1), 7000);
-    document.querySelector('.testimonial-shell')?.addEventListener('mouseenter', () => clearInterval(testimonialTimer));
-  }
 
   document.querySelectorAll('.accordion details').forEach(detail => {
     detail.addEventListener('toggle', () => {

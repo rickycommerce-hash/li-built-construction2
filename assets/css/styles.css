@@ -13,7 +13,7 @@
   --shell:min(1440px,calc(100vw - 64px));
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body.menu-open{overflow:hidden}
 img{display:block;max-width:100%}
@@ -415,3 +415,18 @@ html,body,button,input,select,textarea{font-family:"Inter","Proxima Nova","Aveni
 .testimonials,.areas,.faq{scroll-margin-top:96px}
 @media(max-width:900px){.floating-cta{display:none!important}.visualizer.section-pad{padding:78px 0}}
 @media(max-width:620px){.visualizer.section-pad{padding:64px 0}.visualizer-intro{margin-bottom:24px}.visualizer-form{padding:22px 16px}.upload-zone{min-height:170px}.visualizer-result{min-height:440px}}
+
+/* Professional audit: accessibility, stability and performance */
+[hidden]{display:none!important}
+main>section[id]{scroll-margin-top:90px}
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid #42b9ff;outline-offset:3px}
+.hero-media{background-image:url('../images/hero-optimized.jpg')}
+.contact-bg{background-image:linear-gradient(90deg,rgba(2,8,17,.96),rgba(4,29,55,.72)),url('../images/hero-optimized.jpg')}
+.filter{min-height:44px}
+.choice-grid input:focus-visible+span,.inline-options input:focus-visible+span,.range-options input:focus-visible+span{outline:3px solid #42b9ff;outline-offset:3px}
+.visualizer-consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;color:#526579;font-size:10px;line-height:1.55}.visualizer-consent input{flex:0 0 auto;margin-top:2px}.visualizer-consent a,.consent a{text-decoration:underline;text-underline-offset:2px;color:#087dcc}
+.footer-bottom{color:rgba(255,255,255,.68)}
+.testimonial span{color:#526579}
+.thank-you-page{background-image:linear-gradient(rgba(11,13,12,.86),rgba(11,13,12,.92)),url('../images/hero-optimized.jpg')}
+.privacy-page{margin:0;background:#eef5fb;color:#07111f}.privacy-wrap{width:min(900px,calc(100% - 32px));margin:40px auto;background:#fff;border-top:5px solid #1598ec;padding:clamp(28px,5vw,64px);box-shadow:0 20px 60px rgba(4,39,68,.12)}.privacy-wrap h1{font-size:clamp(38px,6vw,64px);margin:34px 0 12px}.privacy-wrap h2{font-size:23px;margin:34px 0 10px}.privacy-wrap p,.privacy-wrap li{color:#526579;line-height:1.7}.privacy-wrap a{color:#087dcc;text-decoration:underline;text-underline-offset:2px}.privacy-meta{font-size:12px;color:#6b7c8c}.privacy-actions{margin-top:38px}
+.privacy-page .brand-type small{color:#526579}.privacy-page .button{color:#fff;text-decoration:none}

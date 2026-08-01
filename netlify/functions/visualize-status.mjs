@@ -2,16 +2,12 @@ import { getStore } from '@netlify/blobs';
 
 const headers = {
   'Content-Type': 'application/json; charset=utf-8',
-  'Cache-Control': 'no-store',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS'
+  'Cache-Control': 'no-store'
 };
 
 const respond = (body, status = 200) => new Response(JSON.stringify(body), { status, headers });
 
 export default async (request) => {
-  if (request.method === 'OPTIONS') return respond({ ok: true });
   if (request.method !== 'GET') return respond({ error: 'Method not allowed.' }, 405);
 
   const url = new URL(request.url);
@@ -36,5 +32,5 @@ export default async (request) => {
 
 export const config = {
   path: '/api/visualize-status',
-  method: ['GET', 'OPTIONS']
+  method: 'GET'
 };

@@ -3,17 +3,13 @@ import { getStore } from '@netlify/blobs';
 const MAX_IMAGE_DATA_LENGTH = 5_000_000;
 const headers = {
   'Content-Type': 'application/json; charset=utf-8',
-  'Cache-Control': 'no-store',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  'Cache-Control': 'no-store'
 };
 
 const respond = (body, status = 200) => new Response(JSON.stringify(body), { status, headers });
 const cleanJobId = (value) => String(value || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 100);
 
 export default async (request) => {
-  if (request.method === 'OPTIONS') return respond({ ok: true });
   if (request.method !== 'POST') return respond({ error: 'Method not allowed.' }, 405);
 
   let body;
@@ -73,5 +69,5 @@ export default async (request) => {
 
 export const config = {
   path: '/api/visualize-start',
-  method: ['POST', 'OPTIONS']
+  method: 'POST'
 };
