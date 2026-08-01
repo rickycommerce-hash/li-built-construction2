@@ -39,6 +39,7 @@ export default async request => {
     preserveLayout: Boolean(body.preserveLayout),
     photorealistic: Boolean(body.photorealistic),
     quoteTotal: Math.max(0, Number(body.quoteTotal) || 0),
+    estimatedTimeline: text(body.estimatedTimeline, 60),
     quoteValidUntil: text(body.quoteValidUntil, 40),
     source: 'Website Transformation Tool',
     jobId: text(body.jobId, 100)

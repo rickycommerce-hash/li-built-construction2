@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/images/arg-logo.png" type="image/png">
-  <link rel="stylesheet" href="assets/css/styles.css?v=clean3?v=elite-final-1">
+  <link rel="stylesheet" href="assets/css/styles.css?v=8">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -371,10 +371,19 @@
                 <label><span>Email</span><input id="quote-email" type="email" maxlength="120" autocomplete="email" placeholder="you@example.com" required></label>
                 <label><span>Phone</span><input id="quote-phone" type="tel" maxlength="24" autocomplete="tel" placeholder="631-579-3122" required></label>
                 <label><span>Project ZIP code</span><input id="quote-zip" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="11703" required></label>
-                <label><span>Approximate project size</span><select id="quote-size"><option value="small">Small / focused area</option><option value="standard" selected>Typical room or project</option><option value="large">Large or extensive project</option></select></label>
-                <label><span>Finish level</span><select id="quote-finish"><option value="essential">Quality essentials</option><option value="signature" selected>ARG signature</option><option value="premium">Premium finishes</option></select></label>
-                <label><span>Approximate square footage</span><input id="quote-area" type="number" min="25" max="10000" step="25" inputmode="numeric" placeholder="Example: 250"></label>
               </div>
+              <details class="visualizer-advanced">
+                <summary>Optional project preferences <span>+</span></summary>
+                <div class="quote-input-grid advanced-grid">
+                  <label><span>Approximate project size</span><select id="quote-size"><option value="small">Small / focused area</option><option value="standard" selected>Typical room or project</option><option value="large">Large or extensive project</option></select></label>
+                  <label><span>Finish level</span><select id="quote-finish"><option value="essential">Quality essentials</option><option value="signature" selected>ARG signature</option><option value="premium">Premium finishes</option></select></label>
+                  <label><span>Approximate square footage</span><input id="quote-area" type="number" min="25" max="10000" step="25" inputmode="numeric" placeholder="Example: 250"></label>
+                </div>
+                <div class="visualizer-options">
+                  <label class="toggle-option"><input type="checkbox" id="preserve-layout" checked><span></span><p><strong>Preserve the existing layout</strong><small>Keep walls, windows, and the main camera angle as close as possible.</small></p></label>
+                  <label class="toggle-option"><input type="checkbox" id="photorealistic" checked><span></span><p><strong>Photorealistic concept</strong><small>Create a believable finished renovation preview.</small></p></label>
+                </div>
+              </details>
             </div>
 
             <div class="room-feature-builder" id="room-feature-builder" hidden>
@@ -390,11 +399,6 @@
               <textarea id="project-vision" rows="5" maxlength="1200" required placeholder="Example: Open the kitchen into the living room, add a large navy island, warm white cabinetry, better lighting, natural oak floors, and a high-end but comfortable family feel."></textarea>
               <small><b id="vision-count">0</b>/1200 characters</small>
             </label>
-
-            <div class="visualizer-options">
-              <label class="toggle-option"><input type="checkbox" id="preserve-layout" checked><span></span><p><strong>Preserve the existing layout</strong><small>Keep walls, windows, and the main camera angle as close as possible.</small></p></label>
-              <label class="toggle-option"><input type="checkbox" id="photorealistic" checked><span></span><p><strong>Photorealistic contractor concept</strong><small>A believable finished renovation rather than an abstract design rendering.</small></p></label>
-            </div>
 
             <div class="visualizer-submit-row">
               <button class="button button-primary visualizer-submit" id="generate-concept" type="submit">Generate My Renovation Concept <span>↗</span></button>
@@ -463,6 +467,7 @@
                   <div><span>Project</span><strong id="quote-project"></strong></div>
                   <div><span>Design direction</span><strong id="quote-style"></strong></div>
                   <div><span>Location</span><strong id="quote-location">Long Island, NY</strong></div>
+                  <div><span>Estimated timeline</span><strong id="quote-timeline"></strong></div>
                 </div>
                 <div class="quote-table" role="table" aria-label="Estimated project scope">
                   <div class="quote-row quote-table-head" role="row"><span role="columnheader">Estimated scope</span><span role="columnheader">Amount</span></div>
@@ -517,7 +522,7 @@
     <section class="proof section-pad dark-section">
       <div class="shell proof-grid">
         <div class="proof-image reveal">
-          <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=85" alt="Architect and construction team reviewing plans" loading="lazy">
+          <img src="assets/images/arg-planning-team.png" alt="ARG construction professional reviewing residential plans" loading="lazy">
           <div class="proof-image-card"><strong>Built for informed homeowners.</strong><span>Clear answers. Thoughtful planning. Better execution.</span></div>
         </div>
         <div class="proof-copy reveal delay-1">
@@ -717,6 +722,6 @@
 
   <a class="floating-cta" href="#consultation"><span>Start Your Project</span><b>↗</b></a>
   <script src="assets/js/main.js?v=ai-visualizer-1" defer></script>
-  <script src="assets/js/visualizer.js?v=7" defer></script>
+  <script src="assets/js/visualizer.js?v=8" defer></script>
 </body>
 </html>
