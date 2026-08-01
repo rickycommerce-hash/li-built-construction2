@@ -426,6 +426,7 @@ main>section[id]{scroll-margin-top:90px}
 .choice-grid input:focus-visible+span,.inline-options input:focus-visible+span,.range-options input:focus-visible+span{outline:3px solid #42b9ff;outline-offset:3px}
 .visualizer-consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;color:#526579;font-size:10px;line-height:1.55}.visualizer-consent input{flex:0 0 auto;margin-top:2px}.visualizer-consent a,.consent a{text-decoration:underline;text-underline-offset:2px;color:#087dcc}
 .footer-bottom{color:rgba(255,255,255,.68)}
+.footer-brand .brand-type strong{color:#fff}.footer-brand .brand-type small{color:#bfe8ff}
 .testimonial span{color:#526579}
 .thank-you-page{background-image:linear-gradient(rgba(11,13,12,.86),rgba(11,13,12,.92)),url('../images/hero-optimized.jpg')}
 .privacy-page{margin:0;background:#eef5fb;color:#07111f}.privacy-wrap{width:min(900px,calc(100% - 32px));margin:40px auto;background:#fff;border-top:5px solid #1598ec;padding:clamp(28px,5vw,64px);box-shadow:0 20px 60px rgba(4,39,68,.12)}.privacy-wrap h1{font-size:clamp(38px,6vw,64px);margin:34px 0 12px}.privacy-wrap h2{font-size:23px;margin:34px 0 10px}.privacy-wrap p,.privacy-wrap li{color:#526579;line-height:1.7}.privacy-wrap a{color:#087dcc;text-decoration:underline;text-underline-offset:2px}.privacy-meta{font-size:12px;color:#6b7c8c}.privacy-actions{margin-top:38px}
