@@ -94,7 +94,7 @@
           stage: '01',
           label: 'Original Condition',
           title: 'Above-Ground Pool and Basic Yard',
-          img: 'assets/images/ba-pool-before.jpg',
+          img: 'assets/images/pool-before-optimized.jpg',
           alt: 'Backyard before construction with an above-ground pool',
           desc: 'The yard started with a simple above-ground pool and minimal design around it.'
         },
@@ -124,7 +124,7 @@
           stage: '01',
           label: 'Original Condition',
           title: 'Older Vanity and Tile Layout',
-          img: 'assets/images/ba-bath-before.jpg',
+          img: 'assets/images/bath-before-optimized.jpg',
           alt: 'Bathroom before renovation with dated finishes',
           desc: 'The starting point was functional but dated, with aging finishes and a room that felt flat and underdesigned.'
         },
@@ -184,7 +184,7 @@
           stage: '01',
           label: 'Original Condition',
           title: 'Raw Unfinished Basement',
-          img: 'assets/images/ba-basement-before.jpg',
+          img: 'assets/images/basement-before-optimized.jpg',
           alt: 'Basement before finishing with exposed structure',
           desc: 'The lower level began as a raw utility-style basement with exposed structure, bare concrete, and very limited livability.'
         },
