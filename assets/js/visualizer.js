@@ -35,6 +35,12 @@
   const featureBuilder = document.getElementById('room-feature-builder');
   const featureGrid = document.getElementById('room-feature-grid');
   const clearFeatures = document.getElementById('clear-room-features');
+  const quoteCustomerName = document.getElementById('quote-customer-name');
+  const quoteZip = document.getElementById('quote-zip');
+  const quoteSize = document.getElementById('quote-size');
+  const quoteFinish = document.getElementById('quote-finish');
+  const quoteArea = document.getElementById('quote-area');
+  const printQuote = document.getElementById('print-quote');
 
   let processedImage = '';
   let activePointer = null;
@@ -67,6 +73,188 @@
 
   const selectedFeatures = () => [...featureGrid.querySelectorAll('input:checked')].map(input => input.value);
 
+  const quoteBaseRates = {
+    'Kitchen': 42000,
+    'Bathroom': 24000,
+    'Living room': 18000,
+    'Basement': 48000,
+    'Bedroom': 16000,
+    'Home exterior': 32000,
+    'Backyard / patio': 28000,
+    'Pool area': 65000,
+    'Home addition': 125000,
+    'Other area': 20000
+  };
+  const quoteSizeFactors = { small: 0.72, standard: 1, large: 1.45 };
+  const quoteFinishFactors = { essential: 0.82, signature: 1, premium: 1.3 };
+  const quoteFeatureAllowances = [
+    [/second story/i, 45000], [/in-ground pool/i, 60000], [/pool house/i, 45000],
+    [/ensuite bathroom|full bathroom/i, 24000], [/larger kitchen/i, 30000],
+    [/outdoor kitchen/i, 18000], [/wet bar/i, 12000], [/open (a wall|the kitchen)/i, 14000],
+    [/fireplace/i, 9000], [/spa/i, 14000], [/walk-in shower/i, 8500],
+    [/soaking tub/i, 5500], [/double vanity/i, 4500], [/covered (front porch|patio)/i, 16000],
+    [/sliding (glass )?doors/i, 7500], [/larger windows|replace windows/i, 6500],
+    [/siding/i, 14000], [/roofline/i, 12000], [/stone or brick/i, 10000],
+    [/pavers/i, 9000], [/pergola/i, 8000], [/custom millwork|built-in/i, 5500],
+    [/flooring/i, 6500], [/lighting/i, 2500], [/storage|cabinetry|pantry/i, 4500]
+  ];
+
+  const formatCurrency = value => new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD', maximumFractionDigits: 0
+  }).format(value);
+
+  const setQuoteText = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  };
+
+  const allowanceForFeature = feature => {
+    const match = quoteFeatureAllowances.find(([pattern]) => pattern.test(feature));
+    return match ? match[1] : 1750;
+  };
+
+  const renderDetailLines = (elementId, lines, labelKey, detailText) => {
+    const container = document.getElementById(elementId);
+    if (!container) return;
+    container.replaceChildren(...lines.map(line => {
+      const row = document.createElement('div');
+      row.className = 'quote-detail-line';
+      const label = document.createElement('span');
+      label.textContent = line[labelKey];
+      const value = document.createElement('b');
+      value.textContent = detailText(line);
+      row.append(label, value);
+      return row;
+    }));
+  };
+
+  const applyResearchedQuote = research => {
+    const directAllowances = research.materialsTotal + research.equipmentAllowance + research.permitAllowance;
+    setQuoteText('quote-base-label', 'Materials, equipment & permit allowances');
+    setQuoteText('quote-base-amount', formatCurrency(directAllowances));
+    setQuoteText('quote-feature-label', `Trade labor · ${research.laborHours} estimated hours`);
+    setQuoteText('quote-feature-amount', formatCurrency(research.laborTotal));
+    setQuoteText('quote-coordination-amount', formatCurrency(research.coordination + research.contingency));
+    setQuoteText('quote-total', formatCurrency(research.estimateTotal));
+
+    renderDetailLines('quote-material-lines', research.materials || [], 'description', line => `${line.quantity} ${line.unit} · ${formatCurrency(line.total)}`);
+    renderDetailLines('quote-labor-lines', research.labor || [], 'trade', line => `${line.hours} hrs @ ${formatCurrency(line.hourlyRate)} · ${formatCurrency(line.total)}`);
+    const breakdown = document.getElementById('quote-breakdown');
+    if (breakdown) breakdown.hidden = false;
+
+    if (research.marketLow > 0 && research.marketHigh >= research.marketLow) {
+      setQuoteText('comparison-arg-price', formatCurrency(research.estimateTotal));
+      setQuoteText('comparison-market-price', `${formatCurrency(research.marketLow)}–${formatCurrency(research.marketHigh)}`);
+      setQuoteText('comparison-arg-timeline', `Approximately ${research.argTimelineWeeks} week${research.argTimelineWeeks === 1 ? '' : 's'}`);
+      setQuoteText('comparison-market-timeline', `${research.marketTimelineLowWeeks}–${research.marketTimelineHighWeeks} weeks`);
+      const midpoint = (research.marketLow + research.marketHigh) / 2;
+      const difference = Math.max(0, midpoint - research.estimateTotal);
+      const summary = research.estimateTotal < research.marketLow
+        ? `ARG's researched preliminary estimate is ${formatCurrency(research.marketLow - research.estimateTotal)} below the low end of the typical local market range while retaining an itemized scope.`
+        : research.estimateTotal <= research.marketHigh
+          ? `ARG's researched preliminary estimate falls within the typical local market range. The itemized scope and labor-hour plan make proposals easier to compare on equal terms.`
+          : `ARG's estimate reflects the itemized scope shown above. Compare final proposals line by line because lower market figures may omit selections, allowances, supervision or project protection.`;
+      setQuoteText('comparison-summary', difference > 0 ? `${summary} Compared with the market midpoint, the potential difference is ${formatCurrency(difference)}.` : summary);
+      const comparison = document.getElementById('quote-comparison');
+      if (comparison) comparison.hidden = false;
+    }
+
+    const sourceList = document.getElementById('quote-source-list');
+    const sourcePanel = document.getElementById('quote-sources');
+    if (sourceList && sourcePanel && Array.isArray(research.sources) && research.sources.length) {
+      sourceList.replaceChildren(...research.sources.map(source => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = source.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = source.title;
+        item.append(link);
+        if (source.note) item.append(document.createTextNode(` — ${source.note}`));
+        return item;
+      }));
+      sourcePanel.hidden = false;
+    }
+  };
+
+  const pollForQuote = async jobId => {
+    const started = Date.now();
+    while (Date.now() - started < 4 * 60 * 1000) {
+      await new Promise(resolve => window.setTimeout(resolve, 2500));
+      const response = await fetch(`/api/quote-status?jobId=${encodeURIComponent(jobId)}&t=${Date.now()}`, { cache: 'no-store' });
+      const job = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(job.error || 'The quote status could not be checked.');
+      if (job.status === 'complete') return job;
+      if (job.status === 'error') throw new Error(job.error || 'Current research is unavailable.');
+    }
+    throw new Error('Current cost research is taking longer than expected.');
+  };
+
+  const buildInstantQuote = async () => {
+    const features = selectedFeatures();
+    const issued = new Date();
+    const validThrough = new Date(issued);
+    validThrough.setDate(validThrough.getDate() + 60);
+    const dateFormat = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const core = Math.round((quoteBaseRates[spaceInput.value] || 20000)
+      * (quoteSizeFactors[quoteSize?.value] || 1)
+      * (quoteFinishFactors[quoteFinish?.value] || 1));
+    const featureAmount = features.reduce((sum, feature) => sum + allowanceForFeature(feature), 0);
+    const coordination = Math.round((core + featureAmount) * 0.075);
+    const total = Math.round((core + featureAmount + coordination) / 250) * 250;
+    const quoteSuffix = `${String(issued.getFullYear()).slice(-2)}${String(issued.getMonth() + 1).padStart(2, '0')}${String(issued.getDate()).padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    setQuoteText('quote-number', `ARG-${quoteSuffix}`);
+    setQuoteText('quote-customer', quoteCustomerName?.value.trim() || 'Online project inquiry');
+    setQuoteText('quote-issued', dateFormat.format(issued));
+    setQuoteText('quote-valid-through', dateFormat.format(validThrough));
+    setQuoteText('quote-project', spaceInput.value);
+    setQuoteText('quote-style', styleInput.value);
+    setQuoteText('quote-location', quoteZip?.value.trim() ? `ZIP ${quoteZip.value.trim()} · Long Island, NY` : 'Long Island, NY');
+    setQuoteText('quote-base-label', `${spaceInput.value} renovation allowance`);
+    setQuoteText('quote-base-amount', formatCurrency(core));
+    setQuoteText('quote-feature-label', features.length ? `${features.length} selected improvement${features.length === 1 ? '' : 's'}` : 'Selected feature allowance');
+    setQuoteText('quote-feature-amount', formatCurrency(featureAmount));
+    setQuoteText('quote-coordination-amount', formatCurrency(coordination));
+    setQuoteText('quote-total', formatCurrency(total));
+    setQuoteText('quote-description', visionInput.value.trim());
+
+    const featureList = document.getElementById('quote-features');
+    if (featureList) {
+      featureList.innerHTML = features.length
+        ? features.map(feature => `<li>${feature.replace(/[<>&]/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[character]))}</li>`).join('')
+        : '<li>Scope to be confirmed during the complimentary site verification.</li>';
+    }
+
+    const researchStatus = document.getElementById('quote-research-status');
+    if (researchStatus) researchStatus.hidden = false;
+    try {
+      const quoteJobId = `${Date.now()}-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
+      const response = await fetch('/api/quote-estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobId: quoteJobId,
+          space: spaceInput.value,
+          style: styleInput.value,
+          vision: visionInput.value.trim(),
+          features,
+          zip: quoteZip?.value.trim(),
+          size: quoteSize?.value,
+          finish: quoteFinish?.value,
+          areaSqFt: quoteArea?.value
+        })
+      });
+      if (!response.ok && response.status !== 202) throw new Error('Current research is unavailable.');
+      const research = await pollForQuote(quoteJobId);
+      applyResearchedQuote(research);
+    } catch (error) {
+      console.warn('Using standard quote because live cost research was unavailable.', error);
+    } finally {
+      if (researchStatus) researchStatus.hidden = true;
+    }
+  };
+
   const renderRoomFeatures = (room) => {
     const options = roomFeatureOptions[room] || [];
     featureGrid.innerHTML = options.map((option, index) => `
@@ -88,12 +276,12 @@
       if (!response.ok) throw new Error('backend unavailable');
       const data = await response.json();
       if (!data.openaiConfigured) {
-        showError('The visualizer backend is deployed, but OPENAI_API_KEY has not been added in Netlify environment variables.');
+        showError('The design studio is temporarily unavailable. Please call or text 631-579-3122 for assistance.');
       }
     } catch {
       const warning = document.createElement('div');
       warning.className = 'visualizer-backend-warning';
-      warning.innerHTML = '<strong>AI backend not deployed</strong>This site was likely uploaded with Netlify drag-and-drop. The AI visualizer requires a Git-based Netlify deployment or Netlify CLI deployment so the Functions are built and published.';
+      warning.innerHTML = '<strong>Design studio temporarily unavailable</strong>Please call or text 631-579-3122 and the ARG team will help you plan your project.';
       form.prepend(warning);
     }
   };
@@ -382,6 +570,7 @@
       loaderStages.forEach(stage => { stage.classList.remove('is-active'); stage.classList.add('is-complete'); });
       setLoading(false);
       generated.hidden = false;
+      buildInstantQuote();
       setComparison(50);
       generated.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (error) {
@@ -398,4 +587,6 @@
     setComparison(50);
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
+
+  printQuote?.addEventListener('click', () => window.print());
 })();
