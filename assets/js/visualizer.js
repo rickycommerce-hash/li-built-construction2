@@ -3,6 +3,8 @@
 
   const form = document.getElementById('visualizer-form');
   if (!form) return;
+  const visualizerShell = document.querySelector('.visualizer-shell');
+  const result = document.getElementById('visualizer-result');
 
   const fileInput = document.getElementById('space-photo');
   const cameraInput = document.getElementById('camera-photo');
@@ -329,15 +331,20 @@
     });
   };
 
-  const setLoading = (isLoading) => {
+  const setLoading = (isLoading, keepResultFocused = false) => {
+    const resultFocused = isLoading || keepResultFocused;
     submitButton.disabled = isLoading;
     result.setAttribute('aria-busy', String(isLoading));
+    visualizerShell?.classList.toggle('is-generating', resultFocused);
+    form.hidden = resultFocused;
+    form.inert = resultFocused;
     submitButton.classList.toggle('is-loading', isLoading);
     submitButton.innerHTML = isLoading ? 'Generating... Please wait <span>•</span>' : 'Generate My Renovation Concept <span>↗</span>';
     if (isLoading) {
       placeholder.hidden = true;
       generated.hidden = true;
       loader.hidden = false;
+      window.requestAnimationFrame(() => result.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       loaderStartTime = Date.now();
       if (loaderElapsed) loaderElapsed.textContent = '00:00 elapsed';
       updateLoaderPhase(0);
@@ -603,7 +610,7 @@
       if (loaderPercent) loaderPercent.textContent = '100%';
       if (loaderProgressBar) loaderProgressBar.style.width = '100%';
       loaderStages.forEach(stage => { stage.classList.remove('is-active'); stage.classList.add('is-complete'); });
-      setLoading(false);
+      setLoading(false, true);
       generated.hidden = false;
       buildInstantQuote(jobId);
       if (instantQuote) instantQuote.hidden = false;
@@ -617,6 +624,7 @@
   });
 
   resetButton.addEventListener('click', () => {
+    setLoading(false);
     generated.hidden = true;
     if (instantQuote) instantQuote.hidden = true;
     placeholder.hidden = false;
