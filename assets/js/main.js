@@ -112,7 +112,7 @@
           title: 'Completed In-Ground Backyard Retreat',
           img: 'assets/images/ba-pool-after.jpg',
           alt: 'Backyard after construction with a finished in-ground pool',
-          desc: 'The final result feels planned with the home—an in-ground pool, hardscape, and a much more polished Long Island backyard.'
+          desc: 'The final result feels planned with the home: an in-ground pool, hardscape, and a much more polished Long Island backyard.'
         }
       ]
     },
@@ -172,7 +172,7 @@
           title: 'Open-Concept Family Space',
           img: 'assets/images/ba-living-after.jpg',
           alt: 'Finished open-concept living area after renovation',
-          desc: 'The finished space feels lighter, calmer, and much more premium—built for both daily life and entertaining.'
+          desc: 'The finished space feels lighter, calmer, and much more premium, built for both daily life and entertaining.'
         }
       ]
     },
