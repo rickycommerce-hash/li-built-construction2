@@ -409,6 +409,7 @@ html,body,button,input,select,textarea{font-family:"Inter","Proxima Nova","Aveni
 @media(prefers-reduced-motion:reduce){.placeholder-before,.placeholder-divider{animation:none!important}.placeholder-before{clip-path:inset(0 50% 0 0)}.placeholder-divider{left:50%}}
 
 /* Visitor audit refinements */
+.floating-cta{display:none!important}
 .visualizer.section-pad{padding:96px 0}.visualizer-intro{margin-bottom:32px}.visualizer-form{padding:32px}.upload-zone{min-height:180px}.visualizer-result{min-height:620px}
 .contact-phone span{margin-top:7px;color:rgba(255,255,255,.62);font-size:10px;letter-spacing:.04em}
 .testimonials,.areas,.faq{scroll-margin-top:96px}
