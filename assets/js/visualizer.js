@@ -93,6 +93,11 @@
   };
   const quoteSizeFactors = { small: 0.72, standard: 1, large: 1.45 };
   const quoteFinishFactors = { essential: 0.82, signature: 1, premium: 1.3 };
+  const quoteTimelineWeeks = {
+    'Kitchen': [6, 10], 'Bathroom': [4, 7], 'Living room': [4, 8], 'Basement': [8, 14],
+    'Bedroom': [3, 6], 'Home exterior': [4, 8], 'Backyard / patio': [5, 10],
+    'Pool area': [10, 16], 'Home addition': [16, 28], 'Other area': [4, 10]
+  };
   const quoteFeatureAllowances = [
     [/second story/i, 45000], [/in-ground pool/i, 60000], [/pool house/i, 45000],
     [/ensuite bathroom|full bathroom/i, 24000], [/larger kitchen/i, 30000],
@@ -142,6 +147,7 @@
     setQuoteText('quote-feature-amount', formatCurrency(research.laborTotal));
     setQuoteText('quote-coordination-amount', formatCurrency(research.coordination + research.contingency));
     setQuoteText('quote-total', formatCurrency(research.estimateTotal));
+    if (research.argTimelineWeeks) setQuoteText('quote-timeline', `Approximately ${research.argTimelineWeeks} week${research.argTimelineWeeks === 1 ? '' : 's'}`);
 
     renderDetailLines('quote-material-lines', research.materials || [], 'description', line => `${line.quantity} ${line.unit} · ${formatCurrency(line.total)}`);
     renderDetailLines('quote-labor-lines', research.labor || [], 'trade', line => `${line.hours} hrs @ ${formatCurrency(line.hourlyRate)} · ${formatCurrency(line.total)}`);
@@ -217,6 +223,10 @@
     const featureAmount = features.reduce((sum, feature) => sum + allowanceForFeature(feature), 0);
     const coordination = Math.round((core + featureAmount) * 0.075);
     const total = Math.round((core + featureAmount + coordination) / 250) * 250;
+    const baseTimeline = quoteTimelineWeeks[spaceInput.value] || [4, 10];
+    const timelineFactor = quoteSize?.value === 'large' ? 1.35 : quoteSize?.value === 'small' ? 0.8 : 1;
+    const timelineLow = Math.max(2, Math.round(baseTimeline[0] * timelineFactor));
+    const timelineHigh = Math.max(timelineLow + 1, Math.round(baseTimeline[1] * timelineFactor));
     const quoteSuffix = `${String(issued.getFullYear()).slice(-2)}${String(issued.getMonth() + 1).padStart(2, '0')}${String(issued.getDate()).padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     setQuoteText('quote-number', `ARG-${quoteSuffix}`);
@@ -226,6 +236,7 @@
     setQuoteText('quote-project', spaceInput.value);
     setQuoteText('quote-style', styleInput.value);
     setQuoteText('quote-location', quoteZip?.value.trim() ? `ZIP ${quoteZip.value.trim()} · Long Island, NY` : 'Long Island, NY');
+    setQuoteText('quote-timeline', `Approximately ${timelineLow}–${timelineHigh} weeks`);
     setQuoteText('quote-base-label', `${spaceInput.value} renovation allowance`);
     setQuoteText('quote-base-amount', formatCurrency(core));
     setQuoteText('quote-feature-label', features.length ? `${features.length} selected improvement${features.length === 1 ? '' : 's'}` : 'Selected feature allowance');
@@ -251,6 +262,7 @@
       preserveLayout: preserveLayout.checked,
       photorealistic: photorealistic.checked,
       quoteTotal: total,
+      estimatedTimeline: `${timelineLow}–${timelineHigh} weeks`,
       quoteValidUntil: validThrough.toISOString(),
       source: 'Website Transformation Tool',
       jobId

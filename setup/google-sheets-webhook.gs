@@ -25,6 +25,7 @@ function doPost(e) {
       lead.preserveLayout ? 'Yes' : 'No',
       lead.photorealistic ? 'Yes' : 'No',
       Number(lead.quoteTotal) || '',
+      lead.estimatedTimeline || '',
       lead.quoteValidUntil ? new Date(lead.quoteValidUntil) : '',
       lead.source || 'Website Transformation Tool',
       lead.jobId || '',
